@@ -1,1436 +1,463 @@
-
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <meta name="theme-color" content="#0b1220" />
-  <title>PantryPilot AI — Personalized Recipe + Nutrition Guidance</title>
-  <style>
-    :root{
-      --bg:#0a0e1a;
-      --panel:rgba(255,255,255,.08);
-      --panel2:rgba(255,255,255,.12);
-      --border:rgba(255,255,255,.15);
-      --text:#f0f4ff;
-      --muted:rgba(240,244,255,.75);
-      --faint:rgba(240,244,255,.50);
-      --brand1:#8b5cf6;
-      --brand2:#10b981;
-      --brand3:#06b6d4;
-      --warn:#fbbf24;
-      --bad:#fb7185;
-      --good:#34d399;
-      --shadow: 0 20px 60px rgba(0,0,0,.4);
-      --glow: 0 0 40px rgba(139,92,246,.15);
-      --radius: 20px;
-      --radius2: 28px;
-      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-      --sans: 'Inter', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, sans-serif;
-    }
-
-    /* Light mode */
-    [data-theme="light"]{
-      --bg:#f5f7fb;
-      --panel:rgba(255,255,255,.75);
-      --panel2:rgba(255,255,255,.90);
-      --border:rgba(15,23,42,.15);
-      --text:#0f172a;
-      --muted:rgba(15,23,42,.65);
-      --faint:rgba(15,23,42,.45);
-      --shadow: 0 20px 60px rgba(15,23,42,.12);
-      --glow: 0 0 40px rgba(139,92,246,.08);
-    }
-
-    *{ box-sizing:border-box; margin:0; padding:0; }
-    html,body{ height:100%; }
-    body{
-      margin:0;
-      font-family:var(--sans);
-      color:var(--text);
-      background:
-        radial-gradient(ellipse 1200px 600px at 20% 15%, rgba(139,92,246,.35), transparent 60%),
-        radial-gradient(ellipse 1200px 600px at 80% 25%, rgba(16,185,129,.25), transparent 60%),
-        radial-gradient(ellipse 1000px 500px at 50% 90%, rgba(6,182,212,.18), transparent 60%),
-        var(--bg);
-      background-attachment: fixed;
-      overflow-x:hidden;
-      line-height:1.6;
-    }
-    [data-theme="light"] body{
-      background:
-        radial-gradient(ellipse 1200px 600px at 20% 15%, rgba(139,92,246,.12), transparent 60%),
-        radial-gradient(ellipse 1200px 600px at 80% 25%, rgba(16,185,129,.10), transparent 60%),
-        radial-gradient(ellipse 1000px 500px at 50% 90%, rgba(6,182,212,.08), transparent 60%),
-        var(--bg);
-    }
-    a{ color:inherit; text-decoration:none; }
-    .wrap{
-      width:min(1220px, calc(100% - 48px));
-      margin:0 auto;
-      padding:32px 0 80px;
-    }
-
-    /* Glassmorphism utilities */
-    .glass{
-      background: var(--panel);
-      backdrop-filter: blur(20px) saturate(180%);
-      -webkit-backdrop-filter: blur(20px) saturate(180%);
-      border: 1px solid var(--border);
-      box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,.1);
-    }
-    [data-theme="light"] .glass{
-      box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,.5);
-    }
-
-    /* Top bar */
-    .topbar{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:20px;
-      position:sticky;
-      top:0;
-      padding:16px 0;
-      z-index:100;
-      margin-bottom:4px;
-    }
-    .topbar::before{
-      content:"";
-      position:absolute;
-      inset:-20px -100vw 0;
-      background: linear-gradient(to bottom, var(--bg) 0%, transparent 100%);
-      backdrop-filter: blur(20px) saturate(180%);
-      -webkit-backdrop-filter: blur(20px) saturate(180%);
-      opacity:.95;
-      pointer-events:none;
-      border-bottom:1px solid var(--border);
-    }
-    .brand{
-      display:flex;
-      align-items:center;
-      gap:14px;
-      position:relative;
-      z-index:1;
-    }
-    .logo{
-      width:48px;
-      height:48px;
-      border-radius:16px;
-      background:
-        radial-gradient(24px 24px at 35% 35%, rgba(255,255,255,.6), transparent 70%),
-        linear-gradient(135deg, var(--brand1) 0%, var(--brand3) 100%);
-      box-shadow: 0 20px 50px rgba(139,92,246,.35), var(--glow);
-      border:1px solid rgba(255,255,255,.2);
-      position:relative;
-      overflow:hidden;
-    }
-    .logo::after{
-      content:"";
-      position:absolute;
-      inset:0;
-      background: linear-gradient(135deg, transparent 0%, rgba(255,255,255,.15) 100%);
-      opacity:.5;
-    }
-    [data-theme="light"] .logo{ 
-      border:1px solid rgba(255,255,255,.4);
-      box-shadow: 0 20px 50px rgba(139,92,246,.25);
-    }
-    .brand h1{
-      font-size:17px;
-      margin:0;
-      letter-spacing:.2px;
-      line-height:1.2;
-      font-weight:700;
-      background: linear-gradient(135deg, var(--text), var(--muted));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-    .brand small{
-      display:block;
-      margin-top:3px;
-      color:var(--muted);
-      font-weight:500;
-      font-size:13px;
-      letter-spacing:.3px;
-    }
-    .actions{
-      display:flex;
-      align-items:center;
-      gap:12px;
-      position:relative;
-      z-index:1;
-    }
-    .chip{
-      display:inline-flex;
-      align-items:center;
-      gap:10px;
-      padding:11px 16px;
-      border-radius:999px;
-      border:1px solid var(--border);
-      background: var(--panel);
-      backdrop-filter: blur(12px) saturate(180%);
-      -webkit-backdrop-filter: blur(12px) saturate(180%);
-      box-shadow: var(--shadow);
-      font-size:13px;
-      font-weight:500;
-      color:var(--text);
-      user-select:none;
-      transition: all .2s ease;
-    }
-    .chip:hover{
-      background: var(--panel2);
-      border-color: rgba(255,255,255,.25);
-      transform: translateY(-1px);
-    }
-    [data-theme="light"] .chip:hover{
-      border-color: rgba(15,23,42,.25);
-    }
-    .btn{
-      appearance:none;
-      border:1px solid var(--border);
-      background: var(--panel);
-      backdrop-filter: blur(12px) saturate(180%);
-      -webkit-backdrop-filter: blur(12px) saturate(180%);
-      color:var(--text);
-      padding:11px 16px;
-      border-radius:999px;
-      cursor:pointer;
-      font-weight:600;
-      font-size:14px;
-      letter-spacing:.2px;
-      display:inline-flex;
-      align-items:center;
-      gap:10px;
-      transition: all .2s cubic-bezier(.4,0,.2,1);
-      position:relative;
-      overflow:hidden;
-    }
-    .btn::before{
-      content:"";
-      position:absolute;
-      inset:0;
-      background: linear-gradient(135deg, rgba(255,255,255,.1), transparent);
-      opacity:0;
-      transition: opacity .2s ease;
-    }
-    .btn:hover{
-      background: var(--panel2);
-      border-color: rgba(255,255,255,.25);
-      transform: translateY(-2px);
-      box-shadow: 0 10px 30px rgba(0,0,0,.2);
-    }
-    .btn:hover::before{ opacity:1; }
-    [data-theme="light"] .btn:hover{
-      border-color: rgba(15,23,42,.25);
-      box-shadow: 0 10px 30px rgba(15,23,42,.15);
-    }
-    .btn:active{
-      transform: translateY(0);
-    }
-    .btn.primary{
-      background: linear-gradient(135deg, rgba(139,92,246,.95) 0%, rgba(6,182,212,.90) 100%);
-      border-color: rgba(255,255,255,.3);
-      box-shadow: 0 20px 50px rgba(139,92,246,.3), var(--glow);
-      color:#fff;
-      font-weight:700;
-    }
-    .btn.primary:hover{
-      filter:brightness(1.1) saturate(1.1);
-      box-shadow: 0 25px 60px rgba(139,92,246,.4), var(--glow);
-    }
-    .btn .dot{
-      width:9px;height:9px;border-radius:99px;background:var(--good);
-      box-shadow:0 0 0 8px rgba(52,211,153,.15);
-      animation: pulse 2s infinite;
-    }
-    @keyframes pulse{
-      0%, 100%{ opacity:1; }
-      50%{ opacity:.7; }
-    }
-
-    /* Hero */
-    .hero{
-      display:grid;
-      grid-template-columns: 1.05fr .95fr;
-      gap:24px;
-      margin-top:28px;
-      align-items:stretch;
-    }
-    @media (max-width: 980px){
-      .hero{ grid-template-columns: 1fr; }
-    }
-    .card{
-      border:1px solid var(--border);
-      background: var(--panel);
-      backdrop-filter: blur(20px) saturate(180%);
-      -webkit-backdrop-filter: blur(20px) saturate(180%);
-      border-radius: var(--radius2);
-      box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,.08);
-      overflow:hidden;
-      position:relative;
-      transition: all .3s cubic-bezier(.4,0,.2,1);
-    }
-    .card::before{
-      content:"";
-      position:absolute;
-      inset:0;
-      background: linear-gradient(135deg, rgba(255,255,255,.05) 0%, transparent 50%);
-      pointer-events:none;
-      opacity:.6;
-    }
-    [data-theme="light"] .card{
-      box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,.5);
-    }
-    .card:hover{
-      border-color: rgba(255,255,255,.25);
-      transform: translateY(-4px);
-      box-shadow: 0 30px 80px rgba(0,0,0,.3), inset 0 1px 0 rgba(255,255,255,.12);
-    }
-    [data-theme="light"] .card:hover{
-      border-color: rgba(15,23,42,.25);
-      box-shadow: 0 30px 80px rgba(15,23,42,.12), inset 0 1px 0 rgba(255,255,255,.6);
-    }
-    .card .pad{ padding:28px; position:relative; z-index:1; }
-    .hero h2{
-      font-size:48px;
-      line-height:1.05;
-      margin:0 0 14px;
-      letter-spacing:-1px;
-      font-weight:800;
-      background: linear-gradient(135deg, var(--text) 0%, var(--muted) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-    @media (max-width: 540px){
-      .hero h2{ font-size:38px; }
-    }
-    .subtitle{
-      margin:0 0 20px;
-      color:var(--muted);
-      font-size:16px;
-      line-height:1.65;
-      max-width: 60ch;
-      font-weight:400;
-    }
-    .kpis{
-      display:grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap:12px;
-      margin-top:24px;
-    }
-    @media (max-width: 560px){
-      .kpis{ grid-template-columns: 1fr; }
-    }
-    .kpi{
-      border:1px solid var(--border);
-      border-radius: 18px;
-      padding:16px 14px;
-      background: rgba(255,255,255,.05);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      transition: all .2s ease;
-      position:relative;
-      overflow:hidden;
-    }
-    .kpi::before{
-      content:"";
-      position:absolute;
-      inset:0;
-      background: linear-gradient(135deg, rgba(255,255,255,.08), transparent);
-      opacity:0;
-      transition: opacity .2s ease;
-    }
-    .kpi:hover{
-      background: rgba(255,255,255,.08);
-      border-color: rgba(255,255,255,.25);
-      transform: translateY(-2px);
-    }
-    .kpi:hover::before{ opacity:1; }
-    [data-theme="light"] .kpi{
-      background: rgba(255,255,255,.4);
-    }
-    [data-theme="light"] .kpi:hover{
-      background: rgba(255,255,255,.6);
-      border-color: rgba(15,23,42,.25);
-    }
-    .kpi b{
-      display:block;
-      font-size:15px;
-      margin-bottom:5px;
-      font-weight:700;
-      position:relative;
-      z-index:1;
-    }
-    .kpi span{
-      color:var(--muted);
-      font-size:13px;
-      line-height:1.4;
-      display:block;
-      position:relative;
-      z-index:1;
-    }
-    .pillrow{
-      display:flex;flex-wrap:wrap;gap:10px;margin-top:18px;
-    }
-    .pill{
-      font-size:13px;
-      padding:9px 14px;
-      border-radius:999px;
-      border:1px solid var(--border);
-      background: rgba(255,255,255,.06);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      color:var(--text);
-      font-weight:500;
-      transition: all .2s ease;
-      cursor:default;
-    }
-    .pill:hover{
-      background: rgba(255,255,255,.10);
-      border-color: rgba(255,255,255,.25);
-      transform: translateY(-1px);
-    }
-    [data-theme="light"] .pill{
-      background: rgba(255,255,255,.5);
-    }
-    [data-theme="light"] .pill:hover{
-      background: rgba(255,255,255,.7);
-      border-color: rgba(15,23,42,.25);
-    }
-    .pill strong{ font-weight:700; }
-
-    /* Demo image */
-    .demoimg{
-      height:100%;
-      border-radius: var(--radius);
-      background:
-        radial-gradient(600px 300px at 50% 30%, rgba(139,92,246,.25), transparent 70%),
-        radial-gradient(400px 400px at 70% 60%, rgba(16,185,129,.20), transparent 70%),
-        linear-gradient(135deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      flex-direction:column;
-      gap:20px;
-      padding:32px;
-      border:1px solid var(--border);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      position:relative;
-      overflow:hidden;
-    }
-    .demoimg::before{
-      content:"";
-      position:absolute;
-      inset:0;
-      background: url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h60v60H0z' fill='none'/%3E%3Cpath d='M0 0h1v1H0zM30 30h1v1h-1z' fill='rgba(255,255,255,.04)'/%3E%3C/svg%3E");
-      opacity:.5;
-    }
-    .demoimg svg{
-      width:120px;
-      height:120px;
-      opacity:.4;
-      position:relative;
-      z-index:1;
-      filter: drop-shadow(0 10px 30px rgba(139,92,246,.3));
-    }
-    .demoimg p{
-      color:var(--muted);
-      text-align:center;
-      max-width:28ch;
-      font-size:15px;
-      position:relative;
-      z-index:1;
-      font-weight:500;
-    }
-
-    /* Main section */
-    .mainsect{
-      margin-top:32px;
-    }
-    .mainsect h3{
-      font-size:32px;
-      margin:0 0 20px;
-      font-weight:800;
-      letter-spacing:-.5px;
-      background: linear-gradient(135deg, var(--text) 0%, var(--muted) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    /* Form groups */
-    .frmgroup{
-      display:grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px,1fr));
-      gap:20px;
-      margin-bottom:24px;
-    }
-    .field{
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-    }
-    .field label{
-      font-size:14px;
-      font-weight:600;
-      color:var(--text);
-      letter-spacing:.2px;
-      display:flex;
-      align-items:center;
-      gap:6px;
-    }
-    .field input, .field select, .field textarea{
-      appearance:none;
-      border:1px solid var(--border);
-      background: var(--panel);
-      backdrop-filter: blur(12px) saturate(180%);
-      -webkit-backdrop-filter: blur(12px) saturate(180%);
-      color:var(--text);
-      padding:12px 16px;
-      border-radius:14px;
-      font-size:14px;
-      font-family:inherit;
-      transition: all .2s ease;
-      box-shadow: inset 0 1px 3px rgba(0,0,0,.1);
-    }
-    .field input:focus, .field select:focus, .field textarea:focus{
-      outline:none;
-      border-color: var(--brand1);
-      box-shadow: 0 0 0 3px rgba(139,92,246,.15), inset 0 1px 3px rgba(0,0,0,.1);
-      background: var(--panel2);
-    }
-    .field textarea{
-      resize:vertical;
-      min-height:120px;
-      font-family:inherit;
-    }
-    .field input::placeholder, .field textarea::placeholder{
-      color:var(--faint);
-    }
-
-    /* Toggle buttons */
-    .togglerow{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      margin-bottom:24px;
-    }
-    .togglebtn{
-      appearance:none;
-      border:1px solid var(--border);
-      background: var(--panel);
-      backdrop-filter: blur(12px) saturate(180%);
-      -webkit-backdrop-filter: blur(12px) saturate(180%);
-      color:var(--muted);
-      padding:10px 18px;
-      border-radius:999px;
-      cursor:pointer;
-      font-size:14px;
-      font-weight:600;
-      transition: all .2s ease;
-      position:relative;
-      overflow:hidden;
-    }
-    .togglebtn::before{
-      content:"";
-      position:absolute;
-      inset:0;
-      background: linear-gradient(135deg, var(--brand1), var(--brand3));
-      opacity:0;
-      transition: opacity .2s ease;
-    }
-    .togglebtn span{
-      position:relative;
-      z-index:1;
-    }
-    .togglebtn:hover{
-      border-color: rgba(255,255,255,.25);
-      transform: translateY(-2px);
-    }
-    .togglebtn.active{
-      background: linear-gradient(135deg, var(--brand1), var(--brand3));
-      border-color: rgba(255,255,255,.3);
-      color:#fff;
-      box-shadow: 0 10px 30px rgba(139,92,246,.3);
-    }
-    .togglebtn.active::before{ opacity:1; }
-
-    /* Calib */
-    .calibbox{
-      background: rgba(255,255,255,.04);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      border:1px solid var(--border);
-      border-radius:16px;
-      padding:18px 20px;
-      margin-bottom:24px;
-      font-size:13px;
-      color:var(--muted);
-      font-weight:500;
-      display:flex;
-      align-items:center;
-      gap:12px;
-    }
-    [data-theme="light"] .calibbox{
-      background: rgba(255,255,255,.4);
-    }
-    .calibbox::before{
-      content:"📊";
-      font-size:20px;
-    }
-
-    /* Action row */
-    .actrow{
-      display:flex;
-      gap:12px;
-      flex-wrap:wrap;
-      margin-bottom:32px;
-    }
-
-    /* Output */
-    .output{
-      margin-top:32px;
-    }
-    .output h3{
-      font-size:36px;
-      margin:0 0 24px;
-      font-weight:800;
-      letter-spacing:-.7px;
-      background: linear-gradient(135deg, var(--text) 0%, var(--muted) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-    .box{
-      border:1px solid var(--border);
-      background: var(--panel);
-      backdrop-filter: blur(20px) saturate(180%);
-      -webkit-backdrop-filter: blur(20px) saturate(180%);
-      border-radius: var(--radius);
-      padding:24px;
-      margin-bottom:20px;
-      box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,.08);
-      position:relative;
-      overflow:hidden;
-    }
-    .box::before{
-      content:"";
-      position:absolute;
-      inset:0;
-      background: linear-gradient(135deg, rgba(255,255,255,.05) 0%, transparent 50%);
-      pointer-events:none;
-      opacity:.6;
-    }
-    [data-theme="light"] .box{
-      box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,.5);
-    }
-    .box > *{ position:relative; z-index:1; }
-    .box h4{
-      font-size:18px;
-      margin:0 0 14px;
-      font-weight:700;
-      color:var(--text);
-    }
-    .box p{
-      color:var(--muted);
-      line-height:1.65;
-      margin:0;
-    }
-    .box ul, .box ol{
-      margin:0;
-      padding-left:24px;
-      color:var(--muted);
-      line-height:1.7;
-    }
-    .box li{
-      margin-bottom:8px;
-    }
-    .box li b{
-      color:var(--text);
-      font-weight:600;
-    }
-    .note{
-      background: rgba(251,191,36,.08);
-      border:1px solid rgba(251,191,36,.25);
-      border-radius:12px;
-      padding:12px 16px;
-      font-size:13px;
-      color:var(--muted);
-      line-height:1.6;
-      margin-top:14px;
-    }
-    .divider{
-      height:1px;
-      background: var(--border);
-      margin:20px 0;
-      opacity:.5;
-    }
-
-    /* Cols */
-    .cols{
-      display:grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap:20px;
-      margin-bottom:20px;
-    }
-
-    /* Header section */
-    .hdr{
-      display:flex;
-      align-items:flex-start;
-      justify-content:space-between;
-      gap:16px;
-      margin-bottom:20px;
-      flex-wrap:wrap;
-    }
-    .hdr h3{
-      font-size:32px;
-      margin:0;
-      line-height:1.1;
-      font-weight:800;
-      background: linear-gradient(135deg, var(--brand1) 0%, var(--brand3) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-    .badges{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-    }
-    .badge{
-      padding:8px 14px;
-      border-radius:999px;
-      font-size:13px;
-      font-weight:600;
-      border:1px solid var(--border);
-      background: rgba(255,255,255,.06);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-    }
-    .badge strong{
-      font-weight:700;
-    }
-
-    /* Toast */
-    .toast{
-      position:fixed;
-      bottom:24px;
-      left:50%;
-      transform:translateX(-50%) translateY(120px);
-      background: var(--panel);
-      backdrop-filter: blur(20px) saturate(180%);
-      -webkit-backdrop-filter: blur(20px) saturate(180%);
-      border:1px solid var(--border);
-      border-radius:16px;
-      padding:14px 24px;
-      box-shadow: 0 20px 60px rgba(0,0,0,.4);
-      z-index:1000;
-      font-size:14px;
-      font-weight:600;
-      color:var(--text);
-      transition: transform .3s cubic-bezier(.4,0,.2,1);
-      pointer-events:none;
-      max-width:90vw;
-    }
-    .toast.show{
-      transform:translateX(-50%) translateY(0);
-    }
-
-    /* Responsive */
-    @media (max-width: 640px){
-      .wrap{ width:calc(100% - 32px); padding:24px 0 60px; }
-      .topbar{ padding:12px 0; }
-      .brand h1{ font-size:15px; }
-      .hero{ gap:20px; margin-top:20px; }
-      .hero h2{ font-size:32px; margin-bottom:12px; }
-      .subtitle{ font-size:15px; }
-      .card .pad{ padding:20px; }
-      .mainsect h3, .output h3{ font-size:28px; }
-      .frmgroup{ grid-template-columns: 1fr; gap:16px; }
-      .kpis{ gap:10px; }
-      .actrow{ gap:10px; }
-      .cols{ gap:16px; }
-    }
-
-    /* Scrollbar */
-    ::-webkit-scrollbar{
-      width:12px;
-      height:12px;
-    }
-    ::-webkit-scrollbar-track{
-      background: rgba(0,0,0,.1);
-    }
-    ::-webkit-scrollbar-thumb{
-      background: var(--panel2);
-      border-radius:6px;
-      border:2px solid transparent;
-      background-clip:padding-box;
-    }
-    ::-webkit-scrollbar-thumb:hover{
-      background: rgba(255,255,255,.3);
-      background-clip:padding-box;
-    }
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PantryPilot AI - Your Personal Nutrition & Wellness Companion</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div class="wrap">
-    <div class="topbar">
-      <div class="brand">
-        <div class="logo"></div>
-        <div>
-          <h1>Nutritional Manager</h1>
-          <small>Smart Nutrition Manager and Recipe Generator using AI</small>
+  <!-- Navigation Bar -->
+  <nav class="navbar glass">
+    <div class="nav-container">
+      <div class="nav-brand">
+        <div class="logo-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 2l2.01 18.23L12 22l6.99-1.77L21 2z"/>
+            <path d="M12 6.5l5.5 2L12 22 6.5 8.5z"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <h1>PantryPilot AI</h1>
+          <span>Nutrition & Wellness</span>
         </div>
       </div>
-      <div class="actions">
-        <div class="chip"><span class="dot"></span> Live Demo</div>
-        <button class="btn" id="themeBtn" aria-label="Toggle theme">🌗</button>
+      
+      <div class="nav-links">
+        <a href="index.html" class="nav-link active">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+          </svg>
+          Home
+        </a>
+        <a href="nutrition-tracker.html" class="nav-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+          </svg>
+          Nutrition Tracker
+        </a>
+        <a href="yoga-exercises.html" class="nav-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+          </svg>
+          Yoga & Exercise
+        </a>
       </div>
+
+      <div class="nav-actions">
+        <button class="btn-icon" id="themeToggle" aria-label="Toggle theme">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+        </button>
+        <button class="btn-primary" id="loginBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+          Login
+        </button>
+      </div>
+
+      <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
     </div>
+  </nav>
 
-    <div class="hero">
-      <div class="card">
-        <div class="pad">
-          <h2>Turn your pantry into personalized recipes</h2>
-          <p class="subtitle">
-            AI-powered recipe generation that adapts to your ingredients, dietary needs, and cooking time. 
-            Get balanced meals with nutrition guidance.
-          </p>
-          <div class="kpis">
-            <div class="kpi">
-              <b>🎯 Smart Matching</b>
-              <span>Uses what you have</span>
-            </div>
-            <div class="kpi">
-              <b>⚡ Fast Results</b>
-              <span>Under 5 seconds</span>
-            </div>
-            <div class="kpi">
-              <b>🔬 Nutrition</b>
-              <span>Calorie balancing</span>
-            </div>
-          </div>
-          <div class="pillrow">
-            <div class="pill"><strong>Vegetarian</strong> friendly</div>
-            <div class="pill"><strong>Vegan</strong> friendly</div>
-            <div class="pill"><strong>Multi-cuisine</strong> support</div>
-            <div class="pill"><strong>Allergy</strong> aware</div>
-          </div>
-        </div>
+  <!-- Login Modal -->
+  <div class="modal" id="loginModal">
+    <div class="modal-overlay" id="modalOverlay"></div>
+    <div class="modal-content glass">
+      <button class="modal-close" id="modalClose">&times;</button>
+      <div class="modal-header">
+        <h2>Welcome Back</h2>
+        <p>Login to access your personalized nutrition tracking</p>
       </div>
-    </div>
-
-    <div class="mainsect">
-      <h3>Generate Your Recipe</h3>
-
-      <div class="frmgroup">
-        <div class="field">
-          <label>🥘 Pantry Items</label>
-          <textarea id="items" placeholder="rice, tomato, onion, paneer, spinach, garlic..."></textarea>
+      <form id="loginForm" class="auth-form">
+        <div class="form-group">
+          <label for="loginEmail">Email Address</label>
+          <input type="email" id="loginEmail" placeholder="you@example.com" required>
         </div>
+        <div class="form-group">
+          <label for="loginPassword">Password</label>
+          <input type="password" id="loginPassword" placeholder="Enter your password" required>
+        </div>
+        <button type="submit" class="btn-primary btn-full">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+            <polyline points="10 17 15 12 10 7"></polyline>
+            <line x1="15" y1="12" x2="3" y2="12"></line>
+          </svg>
+          Sign In
+        </button>
+      </form>
+      <div class="auth-divider">
+        <span>or</span>
       </div>
-
-      <div class="frmgroup">
-        <div class="field">
-          <label>🌱 Diet</label>
-          <select id="diet">
-            <option value="none">No restriction</option>
-            <option value="vegetarian">Vegetarian</option>
-            <option value="vegan">Vegan</option>
-            <option value="glutenfree">Gluten-free</option>
-          </select>
-        </div>
-
-        <div class="field">
-          <label>🌍 Cuisine</label>
-          <select id="cuisine">
-            <option value="auto">Auto-detect</option>
-            <option value="indian">Indian</option>
-            <option value="italian">Italian</option>
-            <option value="chinese">Chinese</option>
-            <option value="mediterranean">Mediterranean</option>
-            <option value="mexican">Mexican</option>
-            <option value="thai">Thai</option>
-            <option value="japanese">Japanese</option>
-          </select>
-        </div>
-
-        <div class="field">
-          <label>🌶️ Spice Level</label>
-          <select id="spice">
-            <option value="mild">Mild</option>
-            <option value="medium" selected>Medium</option>
-            <option value="hot">Hot</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="frmgroup">
-        <div class="field">
-          <label>⏱️ Cooking Time (min)</label>
-          <input type="number" id="time" value="25" min="5" max="180">
-        </div>
-
-        <div class="field">
-          <label>👥 Servings</label>
-          <input type="number" id="servings" value="2" min="1" max="10">
-        </div>
-
-        <div class="field">
-          <label>🔥 Target Calories/serving</label>
-          <input type="number" id="calGoal" value="450" min="150" max="1200">
-        </div>
-      </div>
-
-      <div style="margin-bottom:14px;">
-        <label style="font-size:14px;font-weight:600;color:var(--text);display:block;margin-bottom:10px;">
-          🎯 Calibration Mode
-        </label>
-        <div class="togglerow">
-          <button class="togglebtn" id="modeTaste" role="switch" aria-selected="false">
-            <span>🍽️ Taste-first</span>
-          </button>
-          <button class="togglebtn active" id="modeBalanced" role="switch" aria-selected="true">
-            <span>⚖️ Balanced</span>
-          </button>
-          <button class="togglebtn" id="modeFitness" role="switch" aria-selected="false">
-            <span>💪 Fitness-first</span>
-          </button>
-        </div>
-      </div>
-
-      <div class="calibbox" id="calibReadout">
-        Profile: Balanced • Learned likes: 0 • Dislikes: 0
-      </div>
-
-      <div class="actrow">
-        <button class="btn primary" id="generateBtn">⚡ Generate Recipe</button>
-        <button class="btn" id="randomBtn">🎲 Try Sample</button>
-        <button class="btn" id="resetBtn">🧹 Reset</button>
-      </div>
-    </div>
-
-    <div class="output">
-      <h3>Recipe Output</h3>
-      <div id="output">
-        <div class="box">
-          <p style="margin:0;color:var(--muted);line-height:1.65">
-            Enter your pantry items and hit <b>Generate Recipe</b> to see AI-powered suggestions.
-          </p>
-        </div>
+      <div class="auth-footer">
+        <p>Don't have an account? <a href="#" id="showSignup">Sign up</a></p>
       </div>
     </div>
   </div>
 
+  <!-- Signup Modal -->
+  <div class="modal" id="signupModal">
+    <div class="modal-overlay" id="signupOverlay"></div>
+    <div class="modal-content glass">
+      <button class="modal-close" id="signupClose">&times;</button>
+      <div class="modal-header">
+        <h2>Create Account</h2>
+        <p>Start your wellness journey today</p>
+      </div>
+      <form id="signupForm" class="auth-form">
+        <div class="form-group">
+          <label for="signupName">Full Name</label>
+          <input type="text" id="signupName" placeholder="John Doe" required>
+        </div>
+        <div class="form-group">
+          <label for="signupEmail">Email Address</label>
+          <input type="email" id="signupEmail" placeholder="you@example.com" required>
+        </div>
+        <div class="form-group">
+          <label for="signupPassword">Password</label>
+          <input type="password" id="signupPassword" placeholder="Create a password" required>
+        </div>
+        <button type="submit" class="btn-primary btn-full">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+            <circle cx="8.5" cy="7" r="4"></circle>
+            <line x1="20" y1="8" x2="20" y2="14"></line>
+            <line x1="23" y1="11" x2="17" y2="11"></line>
+          </svg>
+          Create Account
+        </button>
+      </form>
+      <div class="auth-divider">
+        <span>or</span>
+      </div>
+      <div class="auth-footer">
+        <p>Already have an account? <a href="#" id="showLogin">Login</a></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- User Profile (shown when logged in) -->
+  <div class="user-profile" id="userProfile" style="display: none;">
+    <div class="profile-avatar" id="profileAvatar">
+      <span id="userInitials">AB</span>
+    </div>
+    <div class="profile-dropdown glass">
+      <div class="profile-info">
+        <h4 id="userName">User Name</h4>
+        <p id="userEmail">user@example.com</p>
+      </div>
+      <div class="profile-divider"></div>
+      <button class="profile-btn" id="logoutBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+          <polyline points="16 17 21 12 16 7"></polyline>
+          <line x1="21" y1="12" x2="9" y2="12"></line>
+        </svg>
+        Logout
+      </button>
+    </div>
+  </div>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-content">
+        <div class="hero-left">
+          <div class="hero-badge glass">
+            <span class="pulse-dot"></span>
+            AI-Powered Nutrition Platform
+          </div>
+          <h1 class="hero-title">
+            Transform Your
+            <span class="gradient-text">Pantry</span>
+            Into Healthy Meals
+          </h1>
+          <p class="hero-subtitle">
+            Smart recipe generation with personalized nutrition tracking, calorie management, 
+            and traditional Indian yoga exercises - all in one comprehensive wellness platform.
+          </p>
+          <div class="hero-actions">
+            <button class="btn-primary btn-large" id="getStartedBtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+              Get Started
+            </button>
+            <button class="btn-secondary btn-large" onclick="document.getElementById('recipegen').scrollIntoView({behavior:'smooth'})">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+              Explore Features
+            </button>
+          </div>
+          <div class="hero-stats">
+            <div class="stat-item">
+              <h3>10K+</h3>
+              <p>Active Users</p>
+            </div>
+            <div class="stat-item">
+              <h3>50K+</h3>
+              <p>Recipes Generated</p>
+            </div>
+            <div class="stat-item">
+              <h3>100+</h3>
+              <p>Yoga Routines</p>
+            </div>
+          </div>
+        </div>
+        <div class="hero-right">
+          <div class="hero-card glass">
+            <div class="card-glow"></div>
+            <img src="data:image/svg+xml,%3Csvg width='400' height='400' viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3ClinearGradient id='grad1' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%238b5cf6;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%2306b6d4;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='400' height='400' fill='url(%23grad1)' opacity='0.1'/%3E%3Ccircle cx='200' cy='150' r='80' fill='%238b5cf6' opacity='0.3'/%3E%3Ccircle cx='200' cy='250' r='60' fill='%2310b981' opacity='0.3'/%3E%3Cpath d='M200,50 L250,100 L200,150 L150,100 Z' fill='%2306b6d4' opacity='0.3'/%3E%3Ctext x='50%25' y='50%25' font-family='Arial' font-size='48' fill='%238b5cf6' text-anchor='middle' opacity='0.8'%3E🥗%3C/text%3E%3C/svg%3E" alt="Nutrition Illustration">
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Comprehensive Wellness Features</h2>
+        <p class="section-subtitle">Everything you need for a healthier lifestyle</p>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card glass">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+              <path d="M2 17l10 5 10-5M2 12l10 5 10-5"></path>
+            </svg>
+          </div>
+          <h3>Smart Recipe AI</h3>
+          <p>Generate personalized recipes based on your available ingredients with AI-powered suggestions</p>
+        </div>
+        <div class="feature-card glass">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="1" x2="12" y2="23"></line>
+              <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+            </svg>
+          </div>
+          <h3>Nutrition Tracking</h3>
+          <p>Track daily calories, macronutrients, and micronutrients with detailed analytics and insights</p>
+        </div>
+        <div class="feature-card glass">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+            </svg>
+          </div>
+          <h3>Yoga & Exercise</h3>
+          <p>Traditional Indian yoga asanas and exercises with detailed instructions and benefits</p>
+        </div>
+        <div class="feature-card glass">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="9" y1="9" x2="15" y2="15"></line>
+              <line x1="15" y1="9" x2="9" y2="15"></line>
+            </svg>
+          </div>
+          <h3>Diet Planning</h3>
+          <p>Customize meal plans for vegetarian, vegan, gluten-free, and other dietary preferences</p>
+        </div>
+        <div class="feature-card glass">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+            </svg>
+          </div>
+          <h3>Health Analytics</h3>
+          <p>Visualize your nutrition journey with charts, trends, and personalized recommendations</p>
+        </div>
+        <div class="feature-card glass">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+          </div>
+          <h3>Multi-User Support</h3>
+          <p>Separate profiles for family members with individual tracking and preferences</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Recipe Generator Section -->
+  <section class="recipe-generator" id="recipegen">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">AI Recipe Generator</h2>
+        <p class="section-subtitle">Turn your pantry items into delicious meals</p>
+      </div>
+
+      <div class="generator-content">
+        <div class="generator-form glass">
+          <div class="form-group">
+            <label>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                <circle cx="12" cy="10" r="3"></circle>
+              </svg>
+              Available Ingredients
+            </label>
+            <textarea id="ingredients" placeholder="rice, tomato, onion, paneer, spinach, garlic, cumin..."></textarea>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Diet Preference</label>
+              <select id="diet">
+                <option value="none">No restriction</option>
+                <option value="vegetarian">Vegetarian</option>
+                <option value="vegan">Vegan</option>
+                <option value="glutenfree">Gluten-free</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Cuisine</label>
+              <select id="cuisine">
+                <option value="auto">Auto-detect</option>
+                <option value="indian">Indian</option>
+                <option value="italian">Italian</option>
+                <option value="chinese">Chinese</option>
+                <option value="mediterranean">Mediterranean</option>
+                <option value="mexican">Mexican</option>
+                <option value="thai">Thai</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Cooking Time (min)</label>
+              <input type="number" id="time" value="25" min="5" max="180">
+            </div>
+            <div class="form-group">
+              <label>Servings</label>
+              <input type="number" id="servings" value="2" min="1" max="10">
+            </div>
+            <div class="form-group">
+              <label>Target Calories</label>
+              <input type="number" id="calGoal" value="450" min="150" max="1200">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Spice Level</label>
+            <div class="toggle-group">
+              <button type="button" class="toggle-btn" data-value="mild">🌿 Mild</button>
+              <button type="button" class="toggle-btn active" data-value="medium">🌶️ Medium</button>
+              <button type="button" class="toggle-btn" data-value="hot">🔥 Hot</button>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button class="btn-primary" id="generateBtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path>
+              </svg>
+              Generate Recipe
+            </button>
+            <button class="btn-secondary" id="randomBtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="23 4 23 10 17 10"></polyline>
+                <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+              </svg>
+              Try Sample
+            </button>
+            <button class="btn-secondary" id="resetBtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="1 4 1 10 7 10"></polyline>
+                <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+              </svg>
+              Reset
+            </button>
+          </div>
+        </div>
+
+        <div class="recipe-output" id="recipeOutput">
+          <div class="placeholder glass">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+              <path d="M2 17l10 5 10-5M2 12l10 5 10-5"></path>
+            </svg>
+            <h3>Recipe Ready to Generate</h3>
+            <p>Enter your ingredients and preferences, then click "Generate Recipe" to get personalized meal suggestions</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-brand">
+          <div class="logo-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 2l2.01 18.23L12 22l6.99-1.77L21 2z"/>
+              <path d="M12 6.5l5.5 2L12 22 6.5 8.5z"/>
+            </svg>
+          </div>
+          <div>
+            <h3>PantryPilot AI</h3>
+            <p>Your personal nutrition & wellness companion</p>
+          </div>
+        </div>
+        <div class="footer-links">
+          <div class="footer-column">
+            <h4>Product</h4>
+            <a href="#">Features</a>
+            <a href="#">Pricing</a>
+            <a href="#">FAQ</a>
+          </div>
+          <div class="footer-column">
+            <h4>Company</h4>
+            <a href="#">About</a>
+            <a href="#">Blog</a>
+            <a href="#">Careers</a>
+          </div>
+          <div class="footer-column">
+            <h4>Support</h4>
+            <a href="#">Help Center</a>
+            <a href="#">Contact</a>
+            <a href="#">Privacy</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2024 PantryPilot AI. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Toast Notification -->
   <div class="toast" id="toast"></div>
 
-  <script>
-    const $ = (s) => document.querySelector(s);
-
-    // ---------- Storage & Profile ----------
-    const loadProfile = () => {
-      const stored = localStorage.getItem("pp_profile");
-      if (stored) {
-        try {
-          return JSON.parse(stored);
-        } catch {
-          return { mode: "balanced", likes: 0, dislikes: 0, favoredCuisine: "", spiceBias: 0, proteinBias: 0 };
-        }
-      }
-      return { mode: "balanced", likes: 0, dislikes: 0, favoredCuisine: "", spiceBias: 0, proteinBias: 0 };
-    };
-
-    const saveProfile = (p) => {
-      localStorage.setItem("pp_profile", JSON.stringify(p));
-    };
-
-    let profile = loadProfile();
-
-    // ---------- Theme ----------
-    const initTheme = () => {
-      const stored = localStorage.getItem("pp_theme");
-      applyTheme(stored || "dark");
-    };
-
-    const applyTheme = (t) => {
-      localStorage.setItem("pp_theme", t);
-      document.documentElement.setAttribute("data-theme", t);
-    };
-
-    // ---------- Toast ----------
-    let toastTimeout;
-    const showToast = (msg) => {
-      const toast = $("#toast");
-      toast.textContent = msg;
-      toast.classList.add("show");
-      clearTimeout(toastTimeout);
-      toastTimeout = setTimeout(() => toast.classList.remove("show"), 2500);
-    };
-
-    // ---------- Utilities ----------
-    const normalizeItems = (raw) => {
-      return raw
-        .toLowerCase()
-        .split(/[,;\n]+/)
-        .map(x => x.trim())
-        .filter(Boolean);
-    };
-
-    const titleCase = (s) => s.charAt(0).toUpperCase() + s.slice(1);
-
-    const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
-
-    const round = (v, dec = 0) => {
-      const f = 10 ** dec;
-      return Math.round(v * f) / f;
-    };
-
-    // ---------- Recipe logic ----------
-    const guessCuisine = (items) => {
-      const itemSet = new Set(items);
-      if (itemSet.has("paneer") || itemSet.has("turmeric") || itemSet.has("cumin")) return "indian";
-      if (itemSet.has("pasta") || itemSet.has("basil") || itemSet.has("parmesan")) return "italian";
-      if (itemSet.has("soy sauce") || itemSet.has("ginger")) return "chinese";
-      if (itemSet.has("lime") || itemSet.has("cilantro")) return "mexican";
-      if (itemSet.has("olive oil") || itemSet.has("feta")) return "mediterranean";
-      return "fusion";
-    };
-
-    const pickMain = (items, diet) => {
-      const proteins = ["chicken", "paneer", "tofu", "fish", "beef", "pork", "chickpeas", "lentils", "egg", "shrimp"];
-      const veggieProteins = ["paneer", "tofu", "chickpeas", "lentils"];
-      const veganProteins = ["tofu", "chickpeas", "lentils"];
-
-      let pool = proteins;
-      if (diet === "vegetarian") pool = veggieProteins;
-      if (diet === "vegan") pool = veganProteins;
-
-      for (let p of pool) {
-        if (items.includes(p)) return p;
-      }
-      return items.length > 0 ? items[0] : "vegetables";
-    };
-
-    const methodFromTime = (minutes, cuisine) => {
-      if (minutes <= 15) {
-        return cuisine === "indian" ? "tawa" : cuisine === "chinese" ? "stir-fry" : "quick sauté";
-      } else if (minutes <= 30) {
-        return cuisine === "indian" ? "kadhai" : cuisine === "italian" ? "sauté & simmer" : "pan cook";
-      } else {
-        return cuisine === "indian" ? "dum" : cuisine === "chinese" ? "wok toss" : "slow simmer";
-      }
-    };
-
-    const buildIngredients = (items, servings, cuisine, diet, spiceSel) => {
-      const base = items.slice(0, Math.min(8, items.length)).map(it => ({
-        it,
-        q: servings > 2 ? `${round(100 + servings * 20)}g` : `${round(80 + servings * 15)}g`,
-        kcal: 40 + Math.random() * 60,
-        p: 2 + Math.random() * 8,
-        c: 5 + Math.random() * 15,
-        f: 1 + Math.random() * 5
-      }));
-
-      const spiceMap = { mild: 0.6, medium: 1.0, hot: 1.5 };
-      const spiceMult = spiceMap[spiceSel] || 1.0;
-
-      if (cuisine === "indian" && !items.includes("spice")) {
-        base.push({
-          it: "garam masala",
-          q: `${round(servings * 1.5 * spiceMult)}g`,
-          kcal: 10,
-          p: 0.5,
-          c: 2,
-          f: 0.5
-        });
-      }
-
-      return base;
-    };
-
-    const balanceToCalories = (ingredients, servings, targetCal, diet) => {
-      const total = ingredients.reduce((sum, ing) => sum + (ing.kcal || 0), 0);
-      const perServing = total / servings;
-
-      if (Math.abs(perServing - targetCal) < 50) {
-        return { ingredients, note: null };
-      }
-
-      const diff = targetCal - perServing;
-
-      if (diff > 0) {
-        const extra = {
-          it: diet === "vegan" ? "nuts" : "butter",
-          q: `${round(servings * 5)}g`,
-          kcal: round(diff * 0.5),
-          p: 2,
-          c: 1,
-          f: round(diff * 0.05)
-        };
-        return {
-          ingredients: [...ingredients, extra],
-          note: `Added ${extra.q} ${extra.it} to reach ~${targetCal} kcal/serving.`
-        };
-      } else {
-        const reduced = ingredients.map((ing, i) => {
-          if (i === 0) {
-            const oldKcal = ing.kcal;
-            ing.kcal = round(ing.kcal * 0.8);
-            ing.q = `${round(parseFloat(ing.q) * 0.8)}g`;
-            return ing;
-          }
-          return ing;
-        });
-        return {
-          ingredients: reduced,
-          note: `Reduced first ingredient portion to target ~${targetCal} kcal/serving.`
-        };
-      }
-    };
-
-    const estimateNutrition = (ingredients, servings) => {
-      const totalKcal = ingredients.reduce((s, ing) => s + (ing.kcal || 0), 0);
-      const totalP = ingredients.reduce((s, ing) => s + (ing.p || 0), 0);
-      const totalC = ingredients.reduce((s, ing) => s + (ing.c || 0), 0);
-      const totalF = ingredients.reduce((s, ing) => s + (ing.f || 0), 0);
-
-      return {
-        total: { kcal: totalKcal, p: totalP, c: totalC, f: totalF },
-        per: {
-          kcal: totalKcal / servings,
-          p: totalP / servings,
-          c: totalC / servings,
-          f: totalF / servings
-        }
-      };
-    };
-
-    const buildSteps = (main, cuisine, method, minutes, spiceSel) => {
-      const steps = [];
-      steps.push(`Prep your ingredients: wash and chop ${main} and vegetables into bite-sized pieces.`);
-
-      if (cuisine === "indian") {
-        steps.push(`Heat oil in a ${method === "tawa" ? "flat pan" : "kadhai"}, add cumin seeds until they crackle.`);
-        steps.push(`Add onions and sauté until golden, then add ginger-garlic paste.`);
-        steps.push(`Toss in ${main} and cook on medium heat for ${round(minutes * 0.4)} min.`);
-        if (spiceSel === "hot") {
-          steps.push(`Stir in chopped green chillies and extra red chilli powder for heat.`);
-        }
-        steps.push(`Add tomatoes, spices (turmeric, coriander, garam masala), and simmer until done.`);
-        steps.push(`Garnish with fresh cilantro and serve hot with rice or roti.`);
-      } else if (cuisine === "italian") {
-        steps.push(`Heat olive oil in a pan, sauté garlic until fragrant.`);
-        steps.push(`Add ${main} and cook for ${round(minutes * 0.35)} min.`);
-        steps.push(`Toss in tomatoes and herbs (basil, oregano), simmer gently.`);
-        steps.push(`Finish with a drizzle of olive oil and grated cheese.`);
-      } else if (cuisine === "chinese") {
-        steps.push(`Heat a wok on high, add a splash of oil.`);
-        steps.push(`Stir-fry ${main} quickly for ${round(minutes * 0.3)} min.`);
-        steps.push(`Add soy sauce, ginger, garlic, and vegetables. Toss rapidly.`);
-        steps.push(`Serve immediately over steamed rice.`);
-      } else {
-        steps.push(`Cook ${main} in a pan with your choice of seasoning.`);
-        steps.push(`Add vegetables and simmer for ${round(minutes * 0.5)} min.`);
-        steps.push(`Taste and adjust salt, pepper, and herbs as needed.`);
-        steps.push(`Plate and enjoy your fusion creation!`);
-      }
-
-      return steps;
-    };
-
-    const getSubstitutions = (items, diet) => {
-      const subs = [];
-      if (diet === "vegan" && items.includes("paneer")) {
-        subs.push({ from: "paneer", to: "tofu", why: "vegan preference" });
-      }
-      if (diet === "vegetarian" && items.includes("chicken")) {
-        subs.push({ from: "chicken", to: "paneer or chickpeas", why: "vegetarian preference" });
-      }
-      if (diet === "glutenfree" && items.includes("pasta")) {
-        subs.push({ from: "pasta", to: "rice noodles or quinoa", why: "gluten-free diet" });
-      }
-      return subs;
-    };
-
-    const quickTips = (items, minutes) => {
-      const tips = [];
-      tips.push(`Taste and season as you go — don't add all salt at once.`);
-      tips.push(`Let the dish rest for 2-3 minutes before serving to let flavors meld.`);
-      if (minutes < 20) {
-        tips.push(`For a quick meal, keep ingredients prepped in advance.`);
-      } else {
-        tips.push(`Store leftovers in an airtight container; stays fresh for 2-3 days.`);
-      }
-      if (items.includes("garlic") || items.includes("ginger")) {
-        tips.push(`Fresh garlic/ginger paste beats store-bought for flavor.`);
-      }
-      tips.push(`Garnish with fresh herbs (cilantro, basil, parsley) for a vibrant finish.`);
-      return tips;
-    };
-
-    const buildTitle = (main, cuisine) => {
-      const templates = {
-        indian: ["Masala", "Curry", "Tikka", "Biryani-style", "Tandoori-style"],
-        italian: ["Pasta", "Risotto-style", "Arrabbiata", "Pesto", "Caprese-style"],
-        chinese: ["Stir-fry", "Szechuan-style", "Sweet & Sour", "Kung Pao", "Chow Mein"],
-        mediterranean: ["Herb-Crusted", "Mezze-style", "Grilled", "Feta & Olive", "Lemon-Herb"],
-        mexican: ["Taco-style", "Burrito Bowl", "Quesadilla-style", "Salsa-topped", "Fajita-style"],
-        thai: ["Pad Thai-style", "Green Curry", "Tom Yum-style", "Basil", "Coconut"],
-        japanese: ["Teriyaki", "Miso", "Donburi-style", "Tempura-style", "Sushi Bowl"],
-        fusion: ["Fusion", "Global", "Pan-Asian", "Modern", "Creative"]
-      };
-
-      const pool = templates[cuisine] || templates.fusion;
-      const variant = pool[Math.floor(Math.random() * pool.length)];
-      return `${titleCase(main)} ${variant}`;
-    };
-
-    // ---------- Render ----------
-    const renderRecipe = ({ title, cuisine, method, servings, minutes, ingredients, steps, nutrition, subs, tips, balanceNote }) => {
-      const { total, per } = nutrition;
-      const kcal = total.kcal;
-
-      $("#output").innerHTML = `
-        <div class="box">
-          <div class="hdr">
-            <h3>${title}</h3>
-            <div class="badges">
-              <div class="badge">🌍 ${titleCase(cuisine)}</div>
-              <div class="badge">⚙️ ${titleCase(method)}</div>
-              <div class="badge">⏱️ ${minutes} min</div>
-              <div class="badge">👥 ${servings} servings</div>
-            </div>
-          </div>
-          <div class="badges" style="margin-top:12px">
-            <div class="badge" title="Nutrition estimate">
-              🔥 <strong>${round(kcal)}</strong> kcal/serving
-            </div>
-          </div>
-          <p class="note" style="margin-top:12px">
-            ${balanceNote ? "⚖️ " + balanceNote : "⚙️ Nutrition balancer is ready."}
-            <br><span style="opacity:.9">Nutrition values are estimates for demo purposes.</span>
-          </p>
-        </div>
-
-        <div class="cols">
-          <div class="box">
-            <h4>🥘 Ingredients</h4>
-            <ul>
-              ${ingredients.map(x => `<li><b>${titleCase(x.it)}</b> — ${x.q}</li>`).join("")}
-            </ul>
-          </div>
-
-          <div class="box">
-            <h4>📊 Nutrition (per serving)</h4>
-            <ul>
-              <li><b>Calories</b> — ${round(per.kcal)} kcal</li>
-              <li><b>Protein</b> — ${round(per.p, 1)} g</li>
-              <li><b>Carbs</b> — ${round(per.c, 1)} g</li>
-              <li><b>Fat</b> — ${round(per.f, 1)} g</li>
-            </ul>
-            <p class="note">💡 For accuracy, connect to a verified nutrition database/API.</p>
-          </div>
-        </div>
-
-        <div class="cols">
-          <div class="box">
-            <h4>👨‍🍳 Cooking Steps</h4>
-            <ol>
-              ${steps.map(s => `<li>${s}</li>`).join("")}
-            </ol>
-          </div>
-
-          <div class="box">
-            <h4>🔄 Substitutions</h4>
-            ${subs.length ? `
-              <ul>
-                ${subs.map(s => `<li><b>${titleCase(s.from)}</b> → ${titleCase(s.to)} <span style="color:var(--faint)">(${s.why})</span></li>`).join("")}
-              </ul>
-            ` : `<p style="margin:0;color:var(--muted)">✅ No substitutions needed — your pantry fits well.</p>`}
-            <div class="divider"></div>
-            <h4>💡 Pro Tips</h4>
-            <ul>
-              ${tips.map(t => `<li>${t}</li>`).join("")}
-            </ul>
-          </div>
-        </div>
-
-        <div class="box">
-          <h4>🎯 Calibrate the AI</h4>
-          <p style="margin:0 0 14px;color:var(--muted);line-height:1.6">
-            Rate this recipe — the demo adapts future results based on your feedback (stored locally).
-          </p>
-          <div style="display:flex;gap:12px;flex-wrap:wrap">
-            <button class="btn" id="likeBtn">👍 Like</button>
-            <button class="btn" id="dislikeBtn">👎 Dislike</button>
-            <button class="btn" id="copyBtn">📋 Copy Recipe</button>
-          </div>
-        </div>
-      `;
-
-      // Bind calibration buttons
-      $("#likeBtn").onclick = () => {
-        profile.likes += 1;
-        profile.favoredCuisine = cuisine;
-        profile.spiceBias = clamp(profile.spiceBias + 0.08, -0.4, 0.6);
-        profile.proteinBias = clamp(profile.proteinBias + (profile.mode === "fitness" ? 0.10 : 0.04), 0, 0.7);
-        saveProfile(profile);
-        updateCalibReadout();
-        showToast("Saved 👍 — future recipes will align better.");
-      };
-      $("#dislikeBtn").onclick = () => {
-        profile.dislikes += 1;
-        profile.spiceBias = clamp(profile.spiceBias - 0.06, -0.6, 0.6);
-        saveProfile(profile);
-        updateCalibReadout();
-        showToast("Saved 👎 — adjusting preferences.");
-      };
-      $("#copyBtn").onclick = async () => {
-        const text =
-          `${title}
-Cuisine: ${cuisine} | Method: ${method} | Time: ${minutes} min | Servings: ${servings}
-
-Ingredients:
-${ingredients.map(x => `- ${titleCase(x.it)} — ${x.q}`).join("\n")}
-
-Steps:
-${steps.map((s, i) => `${i + 1}. ${s}`).join("\n")}
-
-Nutrition (per serving, estimate):
-Calories: ${round(per.kcal)} kcal
-Protein: ${round(per.p, 1)} g | Carbs: ${round(per.c, 1)} g | Fat: ${round(per.f, 1)} g
-
-Substitutions:
-${subs.length ? subs.map(s => `- ${titleCase(s.from)} -> ${titleCase(s.to)} (${s.why})`).join("\n") : "- None"}
-
-Tips:
-${tips.map(t => `- ${t}`).join("\n")}
-`;
-        try {
-          await navigator.clipboard.writeText(text);
-          showToast("Copied to clipboard ✅");
-        } catch {
-          showToast("Copy failed — your browser may block clipboard access.");
-        }
-      };
-    };
-
-    // ---------- UI Wiring ----------
-    const updateCalibReadout = () => {
-      const label = profile.mode === "taste" ? "Taste-first" : profile.mode === "fitness" ? "Fitness-first" : "Balanced";
-      $("#calibReadout").textContent =
-        `Profile: ${label} • Learned likes: ${profile.likes} • Dislikes: ${profile.dislikes}`;
-    };
-
-    const setMode = (mode) => {
-      profile.mode = mode;
-      saveProfile(profile);
-      $("#modeTaste").classList.toggle("active", mode === "taste");
-      $("#modeBalanced").classList.toggle("active", mode === "balanced");
-      $("#modeFitness").classList.toggle("active", mode === "fitness");
-      $("#modeTaste").setAttribute("aria-selected", mode === "taste");
-      $("#modeBalanced").setAttribute("aria-selected", mode === "balanced");
-      $("#modeFitness").setAttribute("aria-selected", mode === "fitness");
-      updateCalibReadout();
-      showToast(`Calibration mode: ${mode}`);
-    };
-
-    $("#modeTaste").onclick = () => setMode("taste");
-    $("#modeBalanced").onclick = () => setMode("balanced");
-    $("#modeFitness").onclick = () => setMode("fitness");
-
-    const generate = () => {
-      const itemsRaw = $("#items").value;
-      const diet = $("#diet").value;
-      const cuisineSel = $("#cuisine").value;
-      const minutes = clamp(parseInt($("#time").value || "25", 10), 5, 180);
-      const servings = clamp(parseInt($("#servings").value || "2", 10), 1, 10);
-      const calGoal = clamp(parseInt($("#calGoal").value || "450", 10), 150, 1200);
-      const spiceSel = $("#spice").value;
-
-      const items = normalizeItems(itemsRaw);
-
-      if (items.length < 3) {
-        showToast("Add a few more pantry items (at least 3).");
-        return;
-      }
-
-      const cuisine = cuisineSel === "auto" ? guessCuisine(items) : cuisineSel;
-      const main = pickMain(items, diet);
-      const method = methodFromTime(minutes, cuisine);
-      const baseIngredients = buildIngredients(items, servings, cuisine, diet, spiceSel);
-      const balanced = balanceToCalories(baseIngredients, servings, calGoal, diet);
-      const ingredients = balanced.ingredients;
-
-      const nutrition = estimateNutrition(ingredients, servings);
-      const steps = buildSteps(main, cuisine, method, minutes, spiceSel);
-      const subs = getSubstitutions(items, diet);
-      const tips = quickTips(items, minutes);
-
-      const title = buildTitle(main, cuisine);
-
-      renderRecipe({
-        title, cuisine, method, servings, minutes,
-        ingredients, steps, nutrition, subs, tips,
-        balanceNote: balanced.note
-      });
-
-      showToast("Recipe generated ⚡");
-    };
-
-    $("#generateBtn").onclick = generate;
-
-    $("#randomBtn").onclick = () => {
-      const samples = [
-        { items: "rice, tomato, onion, paneer, spinach, garlic, cumin, turmeric, ginger", diet: "vegetarian", cuisine: "indian", time: 25, serv: 2, cal: 450, spice: "medium" },
-        { items: "pasta, tomato, garlic, onion, mushroom, olive oil, cheese", diet: "none", cuisine: "italian", time: 20, serv: 2, cal: 520, spice: "mild" },
-        { items: "tofu, rice, garlic, ginger, capsicum, carrot, onion", diet: "vegan", cuisine: "chinese", time: 18, serv: 2, cal: 420, spice: "hot" },
-        { items: "chickpeas, tomato, onion, lemon, olive oil, spinach, garlic", diet: "vegan", cuisine: "mediterranean", time: 28, serv: 2, cal: 380, spice: "mild" }
-      ];
-      const s = samples[Math.floor(Math.random() * samples.length)];
-      $("#items").value = s.items;
-      $("#diet").value = s.diet;
-      $("#cuisine").value = s.cuisine;
-      $("#time").value = s.time;
-      $("#servings").value = s.serv;
-      $("#calGoal").value = s.cal;
-      $("#spice").value = s.spice;
-      showToast("Sample loaded 🎲");
-      generate();
-    };
-
-    $("#resetBtn").onclick = () => {
-      $("#items").value = "";
-      $("#diet").value = "none";
-      $("#cuisine").value = "auto";
-      $("#time").value = 25;
-      $("#servings").value = 2;
-      $("#calGoal").value = 450;
-      $("#spice").value = "medium";
-      $("#output").innerHTML = `
-        <div class="box">
-          <p style="margin:0;color:var(--muted);line-height:1.65">
-            Enter your pantry items and hit <b>Generate Recipe</b> to see AI-powered suggestions.
-          </p>
-        </div>`;
-      showToast("Reset done 🧹");
-    };
-
-    $("#themeBtn").onclick = () => {
-      const cur = document.documentElement.getAttribute("data-theme") || "dark";
-      applyTheme(cur === "dark" ? "light" : "dark");
-      showToast("Theme updated 🌗");
-    };
-
-    // Init
-    initTheme();
-    updateCalibReadout();
-    setMode(profile.mode);
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
