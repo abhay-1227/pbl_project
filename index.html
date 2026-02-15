@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -7,56 +8,79 @@
   <title>PantryPilot AI — Personalized Recipe + Nutrition Guidance</title>
   <style>
     :root{
-      --bg:#0b1220;
-      --panel:rgba(255,255,255,.06);
-      --panel2:rgba(255,255,255,.09);
-      --border:rgba(255,255,255,.10);
-      --text:#eaf0ff;
-      --muted:rgba(234,240,255,.75);
-      --faint:rgba(234,240,255,.55);
-      --brand1:#7c3aed;
-      --brand2:#22c55e;
+      --bg:#0a0e1a;
+      --panel:rgba(255,255,255,.08);
+      --panel2:rgba(255,255,255,.12);
+      --border:rgba(255,255,255,.15);
+      --text:#f0f4ff;
+      --muted:rgba(240,244,255,.75);
+      --faint:rgba(240,244,255,.50);
+      --brand1:#8b5cf6;
+      --brand2:#10b981;
       --brand3:#06b6d4;
       --warn:#fbbf24;
       --bad:#fb7185;
       --good:#34d399;
-      --shadow: 0 22px 60px rgba(0,0,0,.45);
-      --radius: 18px;
-      --radius2: 24px;
+      --shadow: 0 20px 60px rgba(0,0,0,.4);
+      --glow: 0 0 40px rgba(139,92,246,.15);
+      --radius: 20px;
+      --radius2: 28px;
       --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
+      --sans: 'Inter', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, sans-serif;
     }
 
     /* Light mode */
     [data-theme="light"]{
-      --bg:#f6f8ff;
-      --panel:rgba(15,23,42,.05);
-      --panel2:rgba(15,23,42,.08);
-      --border:rgba(15,23,42,.12);
-      --text:#0b1220;
-      --muted:rgba(11,18,32,.75);
-      --faint:rgba(11,18,32,.55);
-      --shadow: 0 18px 50px rgba(15,23,42,.12);
+      --bg:#f5f7fb;
+      --panel:rgba(255,255,255,.75);
+      --panel2:rgba(255,255,255,.90);
+      --border:rgba(15,23,42,.15);
+      --text:#0f172a;
+      --muted:rgba(15,23,42,.65);
+      --faint:rgba(15,23,42,.45);
+      --shadow: 0 20px 60px rgba(15,23,42,.12);
+      --glow: 0 0 40px rgba(139,92,246,.08);
     }
 
-    *{ box-sizing:border-box; }
+    *{ box-sizing:border-box; margin:0; padding:0; }
     html,body{ height:100%; }
     body{
       margin:0;
       font-family:var(--sans);
       color:var(--text);
       background:
-        radial-gradient(900px 500px at 15% 10%, rgba(124,58,237,.35), transparent 55%),
-        radial-gradient(900px 500px at 85% 20%, rgba(34,197,94,.28), transparent 55%),
-        radial-gradient(900px 500px at 60% 95%, rgba(6,182,212,.20), transparent 55%),
+        radial-gradient(ellipse 1200px 600px at 20% 15%, rgba(139,92,246,.35), transparent 60%),
+        radial-gradient(ellipse 1200px 600px at 80% 25%, rgba(16,185,129,.25), transparent 60%),
+        radial-gradient(ellipse 1000px 500px at 50% 90%, rgba(6,182,212,.18), transparent 60%),
         var(--bg);
+      background-attachment: fixed;
       overflow-x:hidden;
+      line-height:1.6;
+    }
+    [data-theme="light"] body{
+      background:
+        radial-gradient(ellipse 1200px 600px at 20% 15%, rgba(139,92,246,.12), transparent 60%),
+        radial-gradient(ellipse 1200px 600px at 80% 25%, rgba(16,185,129,.10), transparent 60%),
+        radial-gradient(ellipse 1000px 500px at 50% 90%, rgba(6,182,212,.08), transparent 60%),
+        var(--bg);
     }
     a{ color:inherit; text-decoration:none; }
     .wrap{
-      width:min(1180px, calc(100% - 40px));
+      width:min(1220px, calc(100% - 48px));
       margin:0 auto;
-      padding:28px 0 64px;
+      padding:32px 0 80px;
+    }
+
+    /* Glassmorphism utilities */
+    .glass{
+      background: var(--panel);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,.1);
+    }
+    [data-theme="light"] .glass{
+      box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,.5);
     }
 
     /* Top bar */
@@ -64,58 +88,77 @@
       display:flex;
       align-items:center;
       justify-content:space-between;
-      gap:16px;
+      gap:20px;
       position:sticky;
       top:0;
-      padding:14px 0;
-      backdrop-filter: blur(10px);
-      z-index:10;
+      padding:16px 0;
+      z-index:100;
+      margin-bottom:4px;
     }
     .topbar::before{
       content:"";
       position:absolute;
-      inset:0;
-      background: linear-gradient(to bottom, rgba(0,0,0,.30), transparent);
-      opacity:.35;
+      inset:-20px -100vw 0;
+      background: linear-gradient(to bottom, var(--bg) 0%, transparent 100%);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      opacity:.95;
       pointer-events:none;
-    }
-    [data-theme="light"] .topbar::before{
-      background: linear-gradient(to bottom, rgba(255,255,255,.85), transparent);
-      opacity:1;
+      border-bottom:1px solid var(--border);
     }
     .brand{
       display:flex;
       align-items:center;
-      gap:12px;
+      gap:14px;
       position:relative;
       z-index:1;
     }
     .logo{
-      width:42px;height:42px;border-radius:14px;
+      width:48px;
+      height:48px;
+      border-radius:16px;
       background:
-        radial-gradient(18px 18px at 30% 30%, rgba(255,255,255,.55), transparent 60%),
-        linear-gradient(135deg, var(--brand1), var(--brand3));
-      box-shadow: 0 18px 40px rgba(124,58,237,.25);
-      border:1px solid rgba(255,255,255,.10);
+        radial-gradient(24px 24px at 35% 35%, rgba(255,255,255,.6), transparent 70%),
+        linear-gradient(135deg, var(--brand1) 0%, var(--brand3) 100%);
+      box-shadow: 0 20px 50px rgba(139,92,246,.35), var(--glow);
+      border:1px solid rgba(255,255,255,.2);
+      position:relative;
+      overflow:hidden;
     }
-    [data-theme="light"] .logo{ border:1px solid rgba(15,23,42,.10); }
+    .logo::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      background: linear-gradient(135deg, transparent 0%, rgba(255,255,255,.15) 100%);
+      opacity:.5;
+    }
+    [data-theme="light"] .logo{ 
+      border:1px solid rgba(255,255,255,.4);
+      box-shadow: 0 20px 50px rgba(139,92,246,.25);
+    }
     .brand h1{
-      font-size:15px;
+      font-size:17px;
       margin:0;
-      letter-spacing:.3px;
-      line-height:1.15;
+      letter-spacing:.2px;
+      line-height:1.2;
+      font-weight:700;
+      background: linear-gradient(135deg, var(--text), var(--muted));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
     .brand small{
       display:block;
-      margin-top:2px;
+      margin-top:3px;
       color:var(--muted);
       font-weight:500;
-      font-size:12px;
+      font-size:13px;
+      letter-spacing:.3px;
     }
     .actions{
       display:flex;
       align-items:center;
-      gap:10px;
+      gap:12px;
       position:relative;
       z-index:1;
     }
@@ -123,50 +166,96 @@
       display:inline-flex;
       align-items:center;
       gap:10px;
-      padding:10px 12px;
+      padding:11px 16px;
       border-radius:999px;
       border:1px solid var(--border);
       background: var(--panel);
+      backdrop-filter: blur(12px) saturate(180%);
+      -webkit-backdrop-filter: blur(12px) saturate(180%);
       box-shadow: var(--shadow);
       font-size:13px;
-      color:var(--muted);
+      font-weight:500;
+      color:var(--text);
       user-select:none;
+      transition: all .2s ease;
+    }
+    .chip:hover{
+      background: var(--panel2);
+      border-color: rgba(255,255,255,.25);
+      transform: translateY(-1px);
+    }
+    [data-theme="light"] .chip:hover{
+      border-color: rgba(15,23,42,.25);
     }
     .btn{
       appearance:none;
       border:1px solid var(--border);
       background: var(--panel);
+      backdrop-filter: blur(12px) saturate(180%);
+      -webkit-backdrop-filter: blur(12px) saturate(180%);
       color:var(--text);
-      padding:10px 12px;
+      padding:11px 16px;
       border-radius:999px;
       cursor:pointer;
-      font-weight:650;
+      font-weight:600;
+      font-size:14px;
       letter-spacing:.2px;
       display:inline-flex;
       align-items:center;
       gap:10px;
-      transition: transform .08s ease, background .2s ease, border-color .2s ease;
+      transition: all .2s cubic-bezier(.4,0,.2,1);
+      position:relative;
+      overflow:hidden;
     }
-    .btn:hover{ background: var(--panel2); border-color: rgba(255,255,255,.18); }
-    [data-theme="light"] .btn:hover{ border-color: rgba(15,23,42,.18); }
-    .btn:active{ transform: translateY(1px); }
+    .btn::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background: linear-gradient(135deg, rgba(255,255,255,.1), transparent);
+      opacity:0;
+      transition: opacity .2s ease;
+    }
+    .btn:hover{
+      background: var(--panel2);
+      border-color: rgba(255,255,255,.25);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(0,0,0,.2);
+    }
+    .btn:hover::before{ opacity:1; }
+    [data-theme="light"] .btn:hover{
+      border-color: rgba(15,23,42,.25);
+      box-shadow: 0 10px 30px rgba(15,23,42,.15);
+    }
+    .btn:active{
+      transform: translateY(0);
+    }
     .btn.primary{
-      background: linear-gradient(135deg, rgba(124,58,237,.95), rgba(6,182,212,.85));
-      border-color: rgba(255,255,255,.20);
-      box-shadow: 0 18px 46px rgba(124,58,237,.20);
+      background: linear-gradient(135deg, rgba(139,92,246,.95) 0%, rgba(6,182,212,.90) 100%);
+      border-color: rgba(255,255,255,.3);
+      box-shadow: 0 20px 50px rgba(139,92,246,.3), var(--glow);
+      color:#fff;
+      font-weight:700;
     }
-    .btn.primary:hover{ filter:saturate(1.05) brightness(1.05); }
+    .btn.primary:hover{
+      filter:brightness(1.1) saturate(1.1);
+      box-shadow: 0 25px 60px rgba(139,92,246,.4), var(--glow);
+    }
     .btn .dot{
       width:9px;height:9px;border-radius:99px;background:var(--good);
-      box-shadow:0 0 0 6px rgba(52,211,153,.12);
+      box-shadow:0 0 0 8px rgba(52,211,153,.15);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse{
+      0%, 100%{ opacity:1; }
+      50%{ opacity:.7; }
     }
 
     /* Hero */
     .hero{
       display:grid;
       grid-template-columns: 1.05fr .95fr;
-      gap:18px;
-      margin-top:18px;
+      gap:24px;
+      margin-top:28px;
       align-items:stretch;
     }
     @media (max-width: 980px){
@@ -174,1026 +263,955 @@
     }
     .card{
       border:1px solid var(--border);
-      background: linear-gradient(180deg, var(--panel), rgba(255,255,255,.03));
+      background: var(--panel);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
       border-radius: var(--radius2);
-      box-shadow: var(--shadow);
+      box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,.08);
       overflow:hidden;
       position:relative;
+      transition: all .3s cubic-bezier(.4,0,.2,1);
     }
-    .card .pad{ padding:22px; }
+    .card::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background: linear-gradient(135deg, rgba(255,255,255,.05) 0%, transparent 50%);
+      pointer-events:none;
+      opacity:.6;
+    }
+    [data-theme="light"] .card{
+      box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,.5);
+    }
+    .card:hover{
+      border-color: rgba(255,255,255,.25);
+      transform: translateY(-4px);
+      box-shadow: 0 30px 80px rgba(0,0,0,.3), inset 0 1px 0 rgba(255,255,255,.12);
+    }
+    [data-theme="light"] .card:hover{
+      border-color: rgba(15,23,42,.25);
+      box-shadow: 0 30px 80px rgba(15,23,42,.12), inset 0 1px 0 rgba(255,255,255,.6);
+    }
+    .card .pad{ padding:28px; position:relative; z-index:1; }
     .hero h2{
-      font-size:44px;
-      line-height:1.03;
-      margin:0 0 10px;
-      letter-spacing:-.8px;
+      font-size:48px;
+      line-height:1.05;
+      margin:0 0 14px;
+      letter-spacing:-1px;
+      font-weight:800;
+      background: linear-gradient(135deg, var(--text) 0%, var(--muted) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
     @media (max-width: 540px){
-      .hero h2{ font-size:36px; }
+      .hero h2{ font-size:38px; }
     }
     .subtitle{
-      margin:0 0 16px;
+      margin:0 0 20px;
       color:var(--muted);
-      font-size:15px;
-      line-height:1.6;
-      max-width: 62ch;
+      font-size:16px;
+      line-height:1.65;
+      max-width: 60ch;
+      font-weight:400;
     }
     .kpis{
       display:grid;
       grid-template-columns: repeat(3, 1fr);
-      gap:10px;
-      margin-top:18px;
+      gap:12px;
+      margin-top:24px;
     }
     @media (max-width: 560px){
       .kpis{ grid-template-columns: 1fr; }
     }
     .kpi{
       border:1px solid var(--border);
-      border-radius: 16px;
-      padding:12px 12px 10px;
-      background: rgba(255,255,255,.04);
+      border-radius: 18px;
+      padding:16px 14px;
+      background: rgba(255,255,255,.05);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      transition: all .2s ease;
+      position:relative;
+      overflow:hidden;
     }
-    [data-theme="light"] .kpi{ background: rgba(15,23,42,.03); }
+    .kpi::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background: linear-gradient(135deg, rgba(255,255,255,.08), transparent);
+      opacity:0;
+      transition: opacity .2s ease;
+    }
+    .kpi:hover{
+      background: rgba(255,255,255,.08);
+      border-color: rgba(255,255,255,.25);
+      transform: translateY(-2px);
+    }
+    .kpi:hover::before{ opacity:1; }
+    [data-theme="light"] .kpi{
+      background: rgba(255,255,255,.4);
+    }
+    [data-theme="light"] .kpi:hover{
+      background: rgba(255,255,255,.6);
+      border-color: rgba(15,23,42,.25);
+    }
     .kpi b{
       display:block;
-      font-size:14px;
-      margin-bottom:4px;
+      font-size:15px;
+      margin-bottom:5px;
+      font-weight:700;
+      position:relative;
+      z-index:1;
     }
     .kpi span{
       color:var(--muted);
-      font-size:12px;
-      line-height:1.35;
+      font-size:13px;
+      line-height:1.4;
       display:block;
+      position:relative;
+      z-index:1;
     }
     .pillrow{
-      display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;
+      display:flex;flex-wrap:wrap;gap:10px;margin-top:18px;
     }
     .pill{
-      font-size:12px;
-      padding:8px 10px;
+      font-size:13px;
+      padding:9px 14px;
       border-radius:999px;
       border:1px solid var(--border);
-      background: rgba(255,255,255,.04);
-      color:var(--muted);
-      display:inline-flex;
-      gap:8px;
-      align-items:center;
+      background: rgba(255,255,255,.06);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      color:var(--text);
+      font-weight:500;
+      transition: all .2s ease;
+      cursor:default;
     }
-    [data-theme="light"] .pill{ background: rgba(15,23,42,.03); }
+    .pill:hover{
+      background: rgba(255,255,255,.10);
+      border-color: rgba(255,255,255,.25);
+      transform: translateY(-1px);
+    }
+    [data-theme="light"] .pill{
+      background: rgba(255,255,255,.5);
+    }
+    [data-theme="light"] .pill:hover{
+      background: rgba(255,255,255,.7);
+      border-color: rgba(15,23,42,.25);
+    }
+    .pill strong{ font-weight:700; }
 
-    /* Generator */
-    .grid2{
-      display:grid;
-      grid-template-columns: 1fr 1.15fr;
-      gap:18px;
-      margin-top:18px;
-      align-items:start;
-    }
-    @media (max-width: 980px){
-      .grid2{ grid-template-columns: 1fr; }
-    }
-    .section-title{
+    /* Demo image */
+    .demoimg{
+      height:100%;
+      border-radius: var(--radius);
+      background:
+        radial-gradient(600px 300px at 50% 30%, rgba(139,92,246,.25), transparent 70%),
+        radial-gradient(400px 400px at 70% 60%, rgba(16,185,129,.20), transparent 70%),
+        linear-gradient(135deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
       display:flex;
-      align-items:flex-end;
-      justify-content:space-between;
-      gap:16px;
-      margin: 26px 0 10px;
+      align-items:center;
+      justify-content:center;
+      flex-direction:column;
+      gap:20px;
+      padding:32px;
+      border:1px solid var(--border);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      position:relative;
+      overflow:hidden;
     }
-    .section-title h3{
-      margin:0;
-      font-size:18px;
-      letter-spacing:.2px;
+    .demoimg::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h60v60H0z' fill='none'/%3E%3Cpath d='M0 0h1v1H0zM30 30h1v1h-1z' fill='rgba(255,255,255,.04)'/%3E%3C/svg%3E");
+      opacity:.5;
     }
-    .section-title p{
-      margin:0;
+    .demoimg svg{
+      width:120px;
+      height:120px;
+      opacity:.4;
+      position:relative;
+      z-index:1;
+      filter: drop-shadow(0 10px 30px rgba(139,92,246,.3));
+    }
+    .demoimg p{
       color:var(--muted);
-      font-size:13px;
-      max-width: 70ch;
-      line-height:1.5;
+      text-align:center;
+      max-width:28ch;
+      font-size:15px;
+      position:relative;
+      z-index:1;
+      font-weight:500;
     }
-    .form{
-      display:grid;
-      gap:12px;
+
+    /* Main section */
+    .mainsect{
+      margin-top:32px;
     }
-    .row{
+    .mainsect h3{
+      font-size:32px;
+      margin:0 0 20px;
+      font-weight:800;
+      letter-spacing:-.5px;
+      background: linear-gradient(135deg, var(--text) 0%, var(--muted) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* Form groups */
+    .frmgroup{
       display:grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: repeat(auto-fit, minmax(280px,1fr));
+      gap:20px;
+      margin-bottom:24px;
+    }
+    .field{
+      display:flex;
+      flex-direction:column;
       gap:10px;
     }
-    @media (max-width: 560px){
-      .row{ grid-template-columns: 1fr; }
-    }
-    label{
-      display:block;
-      font-size:12px;
-      color:var(--muted);
-      margin: 0 0 6px;
-    }
-    input,select,textarea{
-      width:100%;
-      padding:12px 12px;
-      border-radius:14px;
-      border:1px solid var(--border);
-      background: rgba(255,255,255,.04);
-      color: var(--text);
-      outline:none;
-      transition: border-color .2s ease, background .2s ease;
+    .field label{
       font-size:14px;
+      font-weight:600;
+      color:var(--text);
+      letter-spacing:.2px;
+      display:flex;
+      align-items:center;
+      gap:6px;
     }
-    [data-theme="light"] input,[data-theme="light"] select,[data-theme="light"] textarea{
-      background: rgba(15,23,42,.03);
+    .field input, .field select, .field textarea{
+      appearance:none;
+      border:1px solid var(--border);
+      background: var(--panel);
+      backdrop-filter: blur(12px) saturate(180%);
+      -webkit-backdrop-filter: blur(12px) saturate(180%);
+      color:var(--text);
+      padding:12px 16px;
+      border-radius:14px;
+      font-size:14px;
+      font-family:inherit;
+      transition: all .2s ease;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,.1);
     }
-    textarea{ min-height:88px; resize:vertical; }
-    input:focus,select:focus,textarea:focus{
-      border-color: rgba(6,182,212,.55);
-      background: rgba(6,182,212,.06);
+    .field input:focus, .field select:focus, .field textarea:focus{
+      outline:none;
+      border-color: var(--brand1);
+      box-shadow: 0 0 0 3px rgba(139,92,246,.15), inset 0 1px 3px rgba(0,0,0,.1);
+      background: var(--panel2);
     }
-    .hint{
-      font-size:12px;
+    .field textarea{
+      resize:vertical;
+      min-height:120px;
+      font-family:inherit;
+    }
+    .field input::placeholder, .field textarea::placeholder{
       color:var(--faint);
-      margin-top:6px;
-      line-height:1.35;
+    }
+
+    /* Toggle buttons */
+    .togglerow{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-bottom:24px;
+    }
+    .togglebtn{
+      appearance:none;
+      border:1px solid var(--border);
+      background: var(--panel);
+      backdrop-filter: blur(12px) saturate(180%);
+      -webkit-backdrop-filter: blur(12px) saturate(180%);
+      color:var(--muted);
+      padding:10px 18px;
+      border-radius:999px;
+      cursor:pointer;
+      font-size:14px;
+      font-weight:600;
+      transition: all .2s ease;
+      position:relative;
+      overflow:hidden;
+    }
+    .togglebtn::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background: linear-gradient(135deg, var(--brand1), var(--brand3));
+      opacity:0;
+      transition: opacity .2s ease;
+    }
+    .togglebtn span{
+      position:relative;
+      z-index:1;
+    }
+    .togglebtn:hover{
+      border-color: rgba(255,255,255,.25);
+      transform: translateY(-2px);
+    }
+    .togglebtn.active{
+      background: linear-gradient(135deg, var(--brand1), var(--brand3));
+      border-color: rgba(255,255,255,.3);
+      color:#fff;
+      box-shadow: 0 10px 30px rgba(139,92,246,.3);
+    }
+    .togglebtn.active::before{ opacity:1; }
+
+    /* Calib */
+    .calibbox{
+      background: rgba(255,255,255,.04);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:18px 20px;
+      margin-bottom:24px;
+      font-size:13px;
+      color:var(--muted);
+      font-weight:500;
+      display:flex;
+      align-items:center;
+      gap:12px;
+    }
+    [data-theme="light"] .calibbox{
+      background: rgba(255,255,255,.4);
+    }
+    .calibbox::before{
+      content:"📊";
+      font-size:20px;
+    }
+
+    /* Action row */
+    .actrow{
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-bottom:32px;
+    }
+
+    /* Output */
+    .output{
+      margin-top:32px;
+    }
+    .output h3{
+      font-size:36px;
+      margin:0 0 24px;
+      font-weight:800;
+      letter-spacing:-.7px;
+      background: linear-gradient(135deg, var(--text) 0%, var(--muted) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .box{
+      border:1px solid var(--border);
+      background: var(--panel);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border-radius: var(--radius);
+      padding:24px;
+      margin-bottom:20px;
+      box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,.08);
+      position:relative;
+      overflow:hidden;
+    }
+    .box::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background: linear-gradient(135deg, rgba(255,255,255,.05) 0%, transparent 50%);
+      pointer-events:none;
+      opacity:.6;
+    }
+    [data-theme="light"] .box{
+      box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,.5);
+    }
+    .box > *{ position:relative; z-index:1; }
+    .box h4{
+      font-size:18px;
+      margin:0 0 14px;
+      font-weight:700;
+      color:var(--text);
+    }
+    .box p{
+      color:var(--muted);
+      line-height:1.65;
+      margin:0;
+    }
+    .box ul, .box ol{
+      margin:0;
+      padding-left:24px;
+      color:var(--muted);
+      line-height:1.7;
+    }
+    .box li{
+      margin-bottom:8px;
+    }
+    .box li b{
+      color:var(--text);
+      font-weight:600;
+    }
+    .note{
+      background: rgba(251,191,36,.08);
+      border:1px solid rgba(251,191,36,.25);
+      border-radius:12px;
+      padding:12px 16px;
+      font-size:13px;
+      color:var(--muted);
+      line-height:1.6;
+      margin-top:14px;
     }
     .divider{
       height:1px;
       background: var(--border);
-      margin: 14px 0;
+      margin:20px 0;
+      opacity:.5;
     }
 
-    /* Output */
-    .recipe{
+    /* Cols */
+    .cols{
       display:grid;
-      gap:12px;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap:20px;
+      margin-bottom:20px;
     }
-    .recipe-header{
+
+    /* Header section */
+    .hdr{
       display:flex;
       align-items:flex-start;
       justify-content:space-between;
-      gap:12px;
+      gap:16px;
+      margin-bottom:20px;
+      flex-wrap:wrap;
     }
-    .recipe-title{
+    .hdr h3{
+      font-size:32px;
       margin:0;
-      font-size:22px;
-      letter-spacing:-.3px;
-      line-height:1.2;
+      line-height:1.1;
+      font-weight:800;
+      background: linear-gradient(135deg, var(--brand1) 0%, var(--brand3) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .badges{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
     }
     .badge{
-      font-size:12px;
-      padding:8px 10px;
+      padding:8px 14px;
       border-radius:999px;
-      border:1px solid var(--border);
-      background: rgba(255,255,255,.04);
-      color: var(--muted);
-      white-space:nowrap;
-      display:inline-flex;
-      gap:8px;
-      align-items:center;
-    }
-    .badge strong{ color: var(--text); }
-    .meta{
-      display:flex;
-      flex-wrap:wrap;
-      gap:8px;
-      margin-top:8px;
-    }
-    .cols{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap:12px;
-    }
-    @media (max-width: 560px){
-      .cols{ grid-template-columns: 1fr; }
-    }
-    .box{
-      border:1px solid var(--border);
-      background: rgba(255,255,255,.04);
-      border-radius: 18px;
-      padding:14px;
-    }
-    [data-theme="light"] .box{ background: rgba(15,23,42,.03); }
-    .box h4{
-      margin:0 0 10px;
       font-size:13px;
-      color:var(--muted);
-      font-weight:750;
-      letter-spacing:.2px;
-      text-transform:uppercase;
+      font-weight:600;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.06);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
     }
-    ul,ol{ margin:0; padding-left: 18px; color:var(--text); }
-    li{ margin: 6px 0; color: var(--muted); line-height:1.45; }
-    li b{ color:var(--text); }
-    .note{
-      font-size:12px;
-      color: var(--faint);
-      line-height:1.45;
-      margin-top:10px;
+    .badge strong{
+      font-weight:700;
     }
 
-    /* Calibration */
-    .calib{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      align-items:center;
-      justify-content:space-between;
-      margin-top: 10px;
-    }
-    .calib-left{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      align-items:center;
-    }
-    .seg{
-      display:flex;
-      border:1px solid var(--border);
-      border-radius:999px;
-      overflow:hidden;
-      background: rgba(255,255,255,.03);
-    }
-    [data-theme="light"] .seg{ background: rgba(15,23,42,.03); }
-    .seg button{
-      border:0;
-      background:transparent;
-      color:var(--muted);
-      padding:10px 12px;
-      cursor:pointer;
-      font-weight:700;
-      display:flex;
-      align-items:center;
-      gap:8px;
-    }
-    .seg button.active{
-      background: rgba(6,182,212,.16);
-      color: var(--text);
-    }
+    /* Toast */
     .toast{
-      position: fixed;
-      bottom: 18px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(10,16,28,.85);
-      border:1px solid rgba(255,255,255,.12);
-      color: var(--text);
-      padding: 12px 14px;
-      border-radius: 14px;
-      box-shadow: var(--shadow);
-      font-size: 13px;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity .25s ease, transform .25s ease;
-      max-width: min(680px, calc(100% - 24px));
-      backdrop-filter: blur(12px);
-      z-index: 50;
-    }
-    [data-theme="light"] .toast{
-      background: rgba(255,255,255,.90);
-      border:1px solid rgba(15,23,42,.12);
+      position:fixed;
+      bottom:24px;
+      left:50%;
+      transform:translateX(-50%) translateY(120px);
+      background: var(--panel);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:14px 24px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.4);
+      z-index:1000;
+      font-size:14px;
+      font-weight:600;
+      color:var(--text);
+      transition: transform .3s cubic-bezier(.4,0,.2,1);
+      pointer-events:none;
+      max-width:90vw;
     }
     .toast.show{
-      opacity: 1;
-      transform: translateX(-50%) translateY(-6px);
+      transform:translateX(-50%) translateY(0);
     }
 
-    /* Footer / references */
-    .refs a{ text-decoration: underline; text-decoration-color: rgba(255,255,255,.35); }
-    [data-theme="light"] .refs a{ text-decoration-color: rgba(15,23,42,.35); }
-    .mini{
-      font-family: var(--mono);
-      font-size: 12px;
-      color: var(--faint);
+    /* Responsive */
+    @media (max-width: 640px){
+      .wrap{ width:calc(100% - 32px); padding:24px 0 60px; }
+      .topbar{ padding:12px 0; }
+      .brand h1{ font-size:15px; }
+      .hero{ gap:20px; margin-top:20px; }
+      .hero h2{ font-size:32px; margin-bottom:12px; }
+      .subtitle{ font-size:15px; }
+      .card .pad{ padding:20px; }
+      .mainsect h3, .output h3{ font-size:28px; }
+      .frmgroup{ grid-template-columns: 1fr; gap:16px; }
+      .kpis{ gap:10px; }
+      .actrow{ gap:10px; }
+      .cols{ gap:16px; }
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar{
+      width:12px;
+      height:12px;
+    }
+    ::-webkit-scrollbar-track{
+      background: rgba(0,0,0,.1);
+    }
+    ::-webkit-scrollbar-thumb{
+      background: var(--panel2);
+      border-radius:6px;
+      border:2px solid transparent;
+      background-clip:padding-box;
+    }
+    ::-webkit-scrollbar-thumb:hover{
+      background: rgba(255,255,255,.3);
+      background-clip:padding-box;
     }
   </style>
 </head>
 <body>
-  <div class="wrap" id="top">
+  <div class="wrap">
     <div class="topbar">
       <div class="brand">
-        <div class="logo" aria-hidden="true"></div>
+        <div class="logo"></div>
         <div>
           <h1>PantryPilot AI</h1>
-          <small>Generative AI for Personalized Recipe Creation & Nutrition Guidance</small>
+          <small>Smart Recipe Generator</small>
         </div>
       </div>
       <div class="actions">
-        <div class="chip" title="Runs locally in your browser">
-          <span class="dot" aria-hidden="true"></span> Offline Demo • Fast
-        </div>
-        <button class="btn" id="themeBtn" aria-label="Toggle theme">🌗 Theme</button>
-        <a class="btn primary" href="#demo">✨ Try the AI</a>
+        <div class="chip"><span class="dot"></span> Live Demo</div>
+        <button class="btn" id="themeBtn" aria-label="Toggle theme">🌗</button>
       </div>
     </div>
 
-    <!-- HERO -->
-    <section class="hero">
+    <div class="hero">
       <div class="card">
         <div class="pad">
-          <h2>Cook smarter, not harder — powered by AI.</h2>
+          <h2>Turn your pantry into personalized recipes</h2>
           <p class="subtitle">
-            A pantry-aware kitchen companion that creates recipes from what you already have,
-            respects dietary restrictions & cultural preferences, and balances nutrition with taste. [1](https://mujmanipal-my.sharepoint.com/personal/abhay_2427030617_muj_manipal_edu/_layouts/15/Doc.aspx?sourcedoc=%7B44FA4BF2-A138-455C-878E-DC8458DCDA19%7D&file=Home%20cooks%20lack%20fast,%20personalized%20recipe%20suggestions%20that%20adapt%20to%20their%20ingredients,%20dietary%20needs,%20cultural%20preferences,%20and%20nutrition%20goals.pptx.pptx&action=edit&mobileredirect=true)
+            AI-powered recipe generation that adapts to your ingredients, dietary needs, and cooking time. 
+            Get balanced meals with nutrition guidance.
           </p>
-
-          <div class="pillrow" aria-label="Key themes">
-            <div class="pill">🥗 Nutrition goals</div>
-            <div class="pill">🧺 Pantry-first</div>
-            <div class="pill">🌍 Cultural authenticity</div>
-            <div class="pill">♻️ Reduce food waste</div>
-            <div class="pill">⏱️ Under 10 seconds</div>
-          </div>
-
-          <div class="kpis" role="list" aria-label="Objectives">
-            <div class="kpi" role="listitem">
-              <b>Fast recipe creation</b>
-              <span>Generate kitchen-ready recipes quickly (goal: under 10 seconds). [1](https://mujmanipal-my.sharepoint.com/personal/abhay_2427030617_muj_manipal_edu/_layouts/15/Doc.aspx?sourcedoc=%7B44FA4BF2-A138-455C-878E-DC8458DCDA19%7D&file=Home%20cooks%20lack%20fast,%20personalized%20recipe%20suggestions%20that%20adapt%20to%20their%20ingredients,%20dietary%20needs,%20cultural%20preferences,%20and%20nutrition%20goals.pptx.pptx&action=edit&mobileredirect=true)</span>
+          <div class="kpis">
+            <div class="kpi">
+              <b>🎯 Smart Matching</b>
+              <span>Uses what you have</span>
             </div>
-            <div class="kpi" role="listitem">
-              <b>Clear nutrition info</b>
-              <span>Show calories + macro estimates for transparency. [1](https://mujmanipal-my.sharepoint.com/personal/abhay_2427030617_muj_manipal_edu/_layouts/15/Doc.aspx?sourcedoc=%7B44FA4BF2-A138-455C-878E-DC8458DCDA19%7D&file=Home%20cooks%20lack%20fast,%20personalized%20recipe%20suggestions%20that%20adapt%20to%20their%20ingredients,%20dietary%20needs,%20cultural%20preferences,%20and%20nutrition%20goals.pptx.pptx&action=edit&mobileredirect=true)</span>
+            <div class="kpi">
+              <b>⚡ Fast Results</b>
+              <span>Under 5 seconds</span>
             </div>
-            <div class="kpi" role="listitem">
-              <b>Safe substitutions</b>
-              <span>Offer 2–3 alternatives with a short rationale. [1](https://mujmanipal-my.sharepoint.com/personal/abhay_2427030617_muj_manipal_edu/_layouts/15/Doc.aspx?sourcedoc=%7B44FA4BF2-A138-455C-878E-DC8458DCDA19%7D&file=Home%20cooks%20lack%20fast,%20personalized%20recipe%20suggestions%20that%20adapt%20to%20their%20ingredients,%20dietary%20needs,%20cultural%20preferences,%20and%20nutrition%20goals.pptx.pptx&action=edit&mobileredirect=true)</span>
+            <div class="kpi">
+              <b>🔬 Nutrition</b>
+              <span>Calorie balancing</span>
             </div>
           </div>
-
-          <div class="divider"></div>
-
-          <div class="section-title">
-            <h3>Problem statement</h3>
-          </div>
-          <p class="subtitle" style="margin:0">
-            Home cooks lack quick, personalized recipe suggestions that adapt to their ingredients,
-            dietary needs, cultural preferences, and nutrition goals. [1](https://mujmanipal-my.sharepoint.com/personal/abhay_2427030617_muj_manipal_edu/_layouts/15/Doc.aspx?sourcedoc=%7B44FA4BF2-A138-455C-878E-DC8458DCDA19%7D&file=Home%20cooks%20lack%20fast,%20personalized%20recipe%20suggestions%20that%20adapt%20to%20their%20ingredients,%20dietary%20needs,%20cultural%20preferences,%20and%20nutrition%20goals.pptx.pptx&action=edit&mobileredirect=true)
-          </p>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="pad">
-          <div class="section-title" style="margin-top:0">
-            <h3>How it works (system flow)</h3>
-            <p>Mirrors the proposed pipeline from your slides. [1](https://mujmanipal-my.sharepoint.com/personal/abhay_2427030617_muj_manipal_edu/_layouts/15/Doc.aspx?sourcedoc=%7B44FA4BF2-A138-455C-878E-DC8458DCDA19%7D&file=Home%20cooks%20lack%20fast,%20personalized%20recipe%20suggestions%20that%20adapt%20to%20their%20ingredients,%20dietary%20needs,%20cultural%20preferences,%20and%20nutrition%20goals.pptx.pptx&action=edit&mobileredirect=true)</p>
-          </div>
-
-          <div class="box">
-            <ol>
-              <li><b>Input Capture</b> — pantry items, dietary needs, calorie goals, cuisine preference, prep time. [1](https://mujmanipal-my.sharepoint.com/personal/abhay_2427030617_muj_manipal_edu/_layouts/15/Doc.aspx?sourcedoc=%7B44FA4BF2-A138-455C-878E-DC8458DCDA19%7D&file=Home%20cooks%20lack%20fast,%20personalized%20recipe%20suggestions%20that%20adapt%20to%20their%20ingredients,%20dietary%20needs,%20cultural%20preferences,%20and%20nutrition%20goals.pptx.pptx&action=edit&mobileredirect=true)</li>
-              <li><b>Ingredient Normalization</b> — standardize inputs + add common staples. [1](https://mujmanipal-my.sharepoint.com/personal/abhay_2427030617_muj_manipal_edu/_layouts/15/Doc.aspx?sourcedoc=%7B44FA4BF2-A138-455C-878E-DC8458DCDA19%7D&file=Home%20cooks%20lack%20fast,%20personalized%20recipe%20suggestions%20that%20adapt%20to%20their%20ingredients,%20dietary%20needs,%20cultural%20preferences,%20and%20nutrition%20goals.pptx.pptx&action=edit&mobileredirect=true)</li>
-              <li><b>Recipe Generator</b> — title, servings, calories/macros, exact quantities, 4–6 steps. [1](https://mujmanipal-my.sharepoint.com/personal/abhay_2427030617_muj_manipal_edu/_layouts/15/Doc.aspx?sourcedoc=%7B44FA4BF2-A138-455C-878E-DC8458DCDA19%7D&file=Home%20cooks%20lack%20fast,%20personalized%20recipe%20suggestions%20that%20adapt%20to%20their%20ingredients,%20dietary%20needs,%20cultural%20preferences,%20and%20nutrition%20goals.pptx.pptx&action=edit&mobileredirect=true)</li>
-              <li><b>Nutrition Balancer</b> — portion tweaks & swaps to meet goals. [1](https://mujmanipal-my.sharepoint.com/personal/abhay_2427030617_muj_manipal_edu/_layouts/15/Doc.aspx?sourcedoc=%7B44FA4BF2-A138-455C-878E-DC8458DCDA19%7D&file=Home%20cooks%20lack%20fast,%20personalized%20recipe%20suggestions%20that%20adapt%20to%20their%20ingredients,%20dietary%20needs,%20cultural%20preferences,%20and%20nutrition%20goals.pptx.pptx&action=edit&mobileredirect=true)</li>
-              <li><b>Constraint-Aware Substitution</b> — safe alternatives with rationale. [1](https://mujmanipal-my.sharepoint.com/personal/abhay_2427030617_muj_manipal_edu/_layouts/15/Doc.aspx?sourcedoc=%7B44FA4BF2-A138-455C-878E-DC8458DCDA19%7D&file=Home%20cooks%20lack%20fast,%20personalized%20recipe%20suggestions%20that%20adapt%20to%20their%20ingredients,%20dietary%20needs,%20cultural%20preferences,%20and%20nutrition%20goals.pptx.pptx&action=edit&mobileredirect=true)</li>
-              <li><b>User Output</b> — recipe card + quick tips (timing, plating, storage). [1](https://mujmanipal-my.sharepoint.com/personal/abhay_2427030617_muj_manipal_edu/_layouts/15/Doc.aspx?sourcedoc=%7B44FA4BF2-A138-455C-878E-DC8458DCDA19%7D&file=Home%20cooks%20lack%20fast,%20personalized%20recipe%20suggestions%20that%20adapt%20to%20their%20ingredients,%20dietary%20needs,%20cultural%20preferences,%20and%20nutrition%20goals.pptx.pptx&action=edit&mobileredirect=true)</li>
-              <li><b>Feedback Loop</b> — learns from ratings to improve future suggestions. [1](https://mujmanipal-my.sharepoint.com/personal/abhay_2427030617_muj_manipal_edu/_layouts/15/Doc.aspx?sourcedoc=%7B44FA4BF2-A138-455C-878E-DC8458DCDA19%7D&file=Home%20cooks%20lack%20fast,%20personalized%20recipe%20suggestions%20that%20adapt%20to%20their%20ingredients,%20dietary%20needs,%20cultural%20preferences,%20and%20nutrition%20goals.pptx.pptx&action=edit&mobileredirect=true)</li>
-            </ol>
-            <p class="note">
-              Note: This is a front-end prototype; nutrition numbers are estimates (not medical advice).
-            </p>
+          <div class="pillrow">
+            <div class="pill"><strong>Vegetarian</strong> friendly</div>
+            <div class="pill"><strong>Vegan</strong> friendly</div>
+            <div class="pill"><strong>Multi-cuisine</strong> support</div>
+            <div class="pill"><strong>Allergy</strong> aware</div>
           </div>
         </div>
       </div>
-    </section>
+    </div>
 
-    <!-- DEMO -->
-    <section id="demo" class="grid2" aria-label="AI recipe demo">
-      <div class="card">
-        <div class="pad">
-          <div class="section-title" style="margin-top:0">
-            <h3>✨ Try PantryPilot AI</h3>
-            <p>Enter what you have — it generates a recipe + nutrition + substitutions + tips. [1](https://mujmanipal-my.sharepoint.com/personal/abhay_2427030617_muj_manipal_edu/_layouts/15/Doc.aspx?sourcedoc=%7B44FA4BF2-A138-455C-878E-DC8458DCDA19%7D&file=Home%20cooks%20lack%20fast,%20personalized%20recipe%20suggestions%20that%20adapt%20to%20their%20ingredients,%20dietary%20needs,%20cultural%20preferences,%20and%20nutrition%20goals.pptx.pptx&action=edit&mobileredirect=true)</p>
-          </div>
+    <div class="mainsect">
+      <h3>Generate Your Recipe</h3>
 
-          <div class="form" aria-label="Recipe input form">
-            <div>
-              <label for="items">Pantry items (comma separated)</label>
-              <textarea id="items" placeholder="e.g., rice, tomato, onion, paneer, spinach, garlic"></textarea>
-              <div class="hint">Tip: Add 6–10 items. We auto-add basic staples (salt, oil, water). [1](https://mujmanipal-my.sharepoint.com/personal/abhay_2427030617_muj_manipal_edu/_layouts/15/Doc.aspx?sourcedoc=%7B44FA4BF2-A138-455C-878E-DC8458DCDA19%7D&file=Home%20cooks%20lack%20fast,%20personalized%20recipe%20suggestions%20that%20adapt%20to%20their%20ingredients,%20dietary%20needs,%20cultural%20preferences,%20and%20nutrition%20goals.pptx.pptx&action=edit&mobileredirect=true)</div>
-            </div>
-
-            <div class="row">
-              <div>
-                <label for="diet">Dietary needs</label>
-                <select id="diet">
-                  <option value="none">None</option>
-                  <option value="vegetarian">Vegetarian</option>
-                  <option value="vegan">Vegan</option>
-                  <option value="glutenfree">Gluten-free</option>
-                  <option value="lactosefree">Lactose-free</option>
-                  <option value="lowcarb">Low-carb</option>
-                  <option value="highprotein">High-protein</option>
-                </select>
-              </div>
-              <div>
-                <label for="cuisine">Cuisine preference</label>
-                <select id="cuisine">
-                  <option value="auto">Auto (from ingredients)</option>
-                  <option value="indian">Indian</option>
-                  <option value="italian">Italian</option>
-                  <option value="mexican">Mexican</option>
-                  <option value="chinese">Chinese</option>
-                  <option value="mediterranean">Mediterranean</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="row">
-              <div>
-                <label for="time">Prep time (minutes)</label>
-                <input id="time" type="number" min="5" max="180" value="25" />
-              </div>
-              <div>
-                <label for="servings">Servings</label>
-                <input id="servings" type="number" min="1" max="10" value="2" />
-              </div>
-            </div>
-
-            <div class="row">
-              <div>
-                <label for="calGoal">Calories target (per serving)</label>
-                <input id="calGoal" type="number" min="150" max="1200" value="450" />
-              </div>
-              <div>
-                <label for="spice">Spice level</label>
-                <select id="spice">
-                  <option value="mild">Mild</option>
-                  <option value="medium" selected>Medium</option>
-                  <option value="hot">Hot</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="divider"></div>
-
-            <div style="display:flex;gap:10px;flex-wrap:wrap">
-              <button class="btn primary" id="generateBtn">⚡ Generate Recipe</button>
-              <button class="btn" id="randomBtn">🎲 Fill Sample</button>
-              <button class="btn" id="resetBtn">🧹 Reset</button>
-            </div>
-
-            <div class="calib">
-              <div class="calib-left">
-                <div class="badge" title="Local learning stored in your browser">
-                  🧠 <strong>Calibration</strong> via feedback loop
-                </div>
-                <div class="seg" role="tablist" aria-label="Calibration mode">
-                  <button id="modeTaste" class="active" role="tab" aria-selected="true">😋 Taste-first</button>
-                  <button id="modeBalanced" role="tab" aria-selected="false">⚖️ Balanced</button>
-                  <button id="modeFitness" role="tab" aria-selected="false">🏋️ Fitness-first</button>
-                </div>
-              </div>
-              <div class="mini" id="calibReadout">Profile: Balanced • Learned likes: 0</div>
-            </div>
-
-          </div>
+      <div class="frmgroup">
+        <div class="field">
+          <label>🥘 Pantry Items</label>
+          <textarea id="items" placeholder="rice, tomato, onion, paneer, spinach, garlic..."></textarea>
         </div>
       </div>
 
-      <div class="card">
-        <div class="pad">
-          <div class="section-title" style="margin-top:0">
-            <h3>🧾 Your Recipe Card</h3>
-            <p>Includes steps, nutrition estimate, substitutions, and quick tips. [1](https://mujmanipal-my.sharepoint.com/personal/abhay_2427030617_muj_manipal_edu/_layouts/15/Doc.aspx?sourcedoc=%7B44FA4BF2-A138-455C-878E-DC8458DCDA19%7D&file=Home%20cooks%20lack%20fast,%20personalized%20recipe%20suggestions%20that%20adapt%20to%20their%20ingredients,%20dietary%20needs,%20cultural%20preferences,%20and%20nutrition%20goals.pptx.pptx&action=edit&mobileredirect=true)</p>
-          </div>
+      <div class="frmgroup">
+        <div class="field">
+          <label>🌱 Diet</label>
+          <select id="diet">
+            <option value="none">No restriction</option>
+            <option value="vegetarian">Vegetarian</option>
+            <option value="vegan">Vegan</option>
+            <option value="glutenfree">Gluten-free</option>
+          </select>
+        </div>
 
-          <div id="output" class="recipe" aria-live="polite">
-            <div class="box">
-              <p style="margin:0;color:var(--muted);line-height:1.55">
-                Enter your pantry items and hit <b>Generate Recipe</b>.  
-                This prototype simulates a generative AI pipeline with nutrition balancing and feedback calibration. [1](https://mujmanipal-my.sharepoint.com/personal/abhay_2427030617_muj_manipal_edu/_layouts/15/Doc.aspx?sourcedoc=%7B44FA4BF2-A138-455C-878E-DC8458DCDA19%7D&file=Home%20cooks%20lack%20fast,%20personalized%20recipe%20suggestions%20that%20adapt%20to%20their%20ingredients,%20dietary%20needs,%20cultural%20preferences,%20and%20nutrition%20goals.pptx.pptx&action=edit&mobileredirect=true)
-              </p>
-            </div>
-          </div>
+        <div class="field">
+          <label>🌍 Cuisine</label>
+          <select id="cuisine">
+            <option value="auto">Auto-detect</option>
+            <option value="indian">Indian</option>
+            <option value="italian">Italian</option>
+            <option value="chinese">Chinese</option>
+            <option value="mediterranean">Mediterranean</option>
+            <option value="mexican">Mexican</option>
+            <option value="thai">Thai</option>
+            <option value="japanese">Japanese</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>🌶️ Spice Level</label>
+          <select id="spice">
+            <option value="mild">Mild</option>
+            <option value="medium" selected>Medium</option>
+            <option value="hot">Hot</option>
+          </select>
         </div>
       </div>
-    </section>
 
-    <!-- ABOUT / OBJECTIVES / REFS -->
-    <section class="grid2" style="margin-top:18px">
-      <div class="card">
-        <div class="pad">
-          <div class="section-title" style="margin-top:0">
-            <h3>Objectives</h3>
-            <p>These are the targets listed in your presentation. [1](https://mujmanipal-my.sharepoint.com/personal/abhay_2427030617_muj_manipal_edu/_layouts/15/Doc.aspx?sourcedoc=%7B44FA4BF2-A138-455C-878E-DC8458DCDA19%7D&file=Home%20cooks%20lack%20fast,%20personalized%20recipe%20suggestions%20that%20adapt%20to%20their%20ingredients,%20dietary%20needs,%20cultural%20preferences,%20and%20nutrition%20goals.pptx.pptx&action=edit&mobileredirect=true)</p>
-          </div>
-          <div class="box">
-            <ul>
-              <li>Generate kitchen-ready recipes quickly (goal: <b>under 10 seconds</b>). [1](https://mujmanipal-my.sharepoint.com/personal/abhay_2427030617_muj_manipal_edu/_layouts/15/Doc.aspx?sourcedoc=%7B44FA4BF2-A138-455C-878E-DC8458DCDA19%7D&file=Home%20cooks%20lack%20fast,%20personalized%20recipe%20suggestions%20that%20adapt%20to%20their%20ingredients,%20dietary%20needs,%20cultural%20preferences,%20and%20nutrition%20goals.pptx.pptx&action=edit&mobileredirect=true)</li>
-              <li>Ensure nutritional clarity with calories and macro display. [1](https://mujmanipal-my.sharepoint.com/personal/abhay_2427030617_muj_manipal_edu/_layouts/15/Doc.aspx?sourcedoc=%7B44FA4BF2-A138-455C-878E-DC8458DCDA19%7D&file=Home%20cooks%20lack%20fast,%20personalized%20recipe%20suggestions%20that%20adapt%20to%20their%20ingredients,%20dietary%20needs,%20cultural%20preferences,%20and%20nutrition%20goals.pptx.pptx&action=edit&mobileredirect=true)</li>
-              <li>Provide 2–3 safe substitutions with rationale. [1](https://mujmanipal-my.sharepoint.com/personal/abhay_2427030617_muj_manipal_edu/_layouts/15/Doc.aspx?sourcedoc=%7B44FA4BF2-A138-455C-878E-DC8458DCDA19%7D&file=Home%20cooks%20lack%20fast,%20personalized%20recipe%20suggestions%20that%20adapt%20to%20their%20ingredients,%20dietary%20needs,%20cultural%20preferences,%20and%20nutrition%20goals.pptx.pptx&action=edit&mobileredirect=true)</li>
-              <li>Reduce food waste by maximizing pantry use and offering storage tips. [1](https://mujmanipal-my.sharepoint.com/personal/abhay_2427030617_muj_manipal_edu/_layouts/15/Doc.aspx?sourcedoc=%7B44FA4BF2-A138-455C-878E-DC8458DCDA19%7D&file=Home%20cooks%20lack%20fast,%20personalized%20recipe%20suggestions%20that%20adapt%20to%20their%20ingredients,%20dietary%20needs,%20cultural%20preferences,%20and%20nutrition%20goals.pptx.pptx&action=edit&mobileredirect=true)</li>
-            </ul>
-          </div>
-          <p class="note">
-            This site is designed as an efficient, client-side demo you can later connect to a real AI model/API.
+      <div class="frmgroup">
+        <div class="field">
+          <label>⏱️ Cooking Time (min)</label>
+          <input type="number" id="time" value="25" min="5" max="180">
+        </div>
+
+        <div class="field">
+          <label>👥 Servings</label>
+          <input type="number" id="servings" value="2" min="1" max="10">
+        </div>
+
+        <div class="field">
+          <label>🔥 Target Calories/serving</label>
+          <input type="number" id="calGoal" value="450" min="150" max="1200">
+        </div>
+      </div>
+
+      <div style="margin-bottom:14px;">
+        <label style="font-size:14px;font-weight:600;color:var(--text);display:block;margin-bottom:10px;">
+          🎯 Calibration Mode
+        </label>
+        <div class="togglerow">
+          <button class="togglebtn" id="modeTaste" role="switch" aria-selected="false">
+            <span>🍽️ Taste-first</span>
+          </button>
+          <button class="togglebtn active" id="modeBalanced" role="switch" aria-selected="true">
+            <span>⚖️ Balanced</span>
+          </button>
+          <button class="togglebtn" id="modeFitness" role="switch" aria-selected="false">
+            <span>💪 Fitness-first</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="calibbox" id="calibReadout">
+        Profile: Balanced • Learned likes: 0 • Dislikes: 0
+      </div>
+
+      <div class="actrow">
+        <button class="btn primary" id="generateBtn">⚡ Generate Recipe</button>
+        <button class="btn" id="randomBtn">🎲 Try Sample</button>
+        <button class="btn" id="resetBtn">🧹 Reset</button>
+      </div>
+    </div>
+
+    <div class="output">
+      <h3>Recipe Output</h3>
+      <div id="output">
+        <div class="box">
+          <p style="margin:0;color:var(--muted);line-height:1.65">
+            Enter your pantry items and hit <b>Generate Recipe</b> to see AI-powered suggestions.
           </p>
         </div>
       </div>
-
-      <div class="card refs">
-        <div class="pad">
-          <div class="section-title" style="margin-top:0">
-            <h3>References (from slides)</h3>
-            <p>Included exactly as listed. [1](https://mujmanipal-my.sharepoint.com/personal/abhay_2427030617_muj_manipal_edu/_layouts/15/Doc.aspx?sourcedoc=%7B44FA4BF2-A138-455C-878E-DC8458DCDA19%7D&file=Home%20cooks%20lack%20fast,%20personalized%20recipe%20suggestions%20that%20adapt%20to%20their%20ingredients,%20dietary%20needs,%20cultural%20preferences,%20and%20nutrition%20goals.pptx.pptx&action=edit&mobileredirect=true)</p>
-          </div>
-          <div class="box">
-            <ul>
-              <li>Recipe Generation with Neural Language Models — Kusner & Hernández-Lobato (2016): <a href="https://arxiv.org/abs/1606.03498" target="_blank" rel="noreferrer">arXiv:1606.03498</a> [1](https://mujmanipal-my.sharepoint.com/personal/abhay_2427030617_muj_manipal_edu/_layouts/15/Doc.aspx?sourcedoc=%7B44FA4BF2-A138-455C-878E-DC8458DCDA19%7D&file=Home%20cooks%20lack%20fast,%20personalized%20recipe%20suggestions%20that%20adapt%20to%20their%20ingredients,%20dietary%20needs,%20cultural%20preferences,%20and%20nutrition%20goals.pptx.pptx&action=edit&mobileredirect=true)</li>
-              <li>Ingredient substitution / ingredient networks — Teng, Lin, Adamic (2012): <a href="https://dl.acm.org/doi/10.1145/2187836.2187953" target="_blank" rel="noreferrer">ACM DOI</a> [1](https://mujmanipal-my.sharepoint.com/personal/abhay_2427030617_muj_manipal_edu/_layouts/15/Doc.aspx?sourcedoc=%7B44FA4BF2-A138-455C-878E-DC8458DCDA19%7D&file=Home%20cooks%20lack%20fast,%20personalized%20recipe%20suggestions%20that%20adapt%20to%20their%20ingredients,%20dietary%20needs,%20cultural%20preferences,%20and%20nutrition%20goals.pptx.pptx&action=edit&mobileredirect=true)</li>
-              <li>Nutritional estimation & cross-modal cooking embeddings — Salvador et al. (2017): <a href="https://arxiv.org/abs/1703.03924" target="_blank" rel="noreferrer">arXiv:1703.03924</a> [1](https://mujmanipal-my.sharepoint.com/personal/abhay_2427030617_muj_manipal_edu/_layouts/15/Doc.aspx?sourcedoc=%7B44FA4BF2-A138-455C-878E-DC8458DCDA19%7D&file=Home%20cooks%20lack%20fast,%20personalized%20recipe%20suggestions%20that%20adapt%20to%20their%20ingredients,%20dietary%20needs,%20cultural%20preferences,%20and%20nutrition%20goals.pptx.pptx&action=edit&mobileredirect=true)</li>
-              <li>Personalization in Food-Tech AI — Yang et al. (2019): <a href="https://dl.acm.org/doi/10.1145/3343031.3350905" target="_blank" rel="noreferrer">ACM DOI</a> [1](https://mujmanipal-my.sharepoint.com/personal/abhay_2427030617_muj_manipal_edu/_layouts/15/Doc.aspx?sourcedoc=%7B44FA4BF2-A138-455C-878E-DC8458DCDA19%7D&file=Home%20cooks%20lack%20fast,%20personalized%20recipe%20suggestions%20that%20adapt%20to%20their%20ingredients,%20dietary%20needs,%20cultural%20preferences,%20and%20nutrition%20goals.pptx.pptx&action=edit&mobileredirect=true)</li>
-            </ul>
-          </div>
-          <p class="note">
-            Footer note: Always verify allergies and medical nutrition needs with a professional.
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <div style="text-align:center;margin-top:22px;color:var(--faint);font-size:12px">
-      Built for your project: <b>Generative AI-powered kitchen companion</b>. [1](https://mujmanipal-my.sharepoint.com/personal/abhay_2427030617_muj_manipal_edu/_layouts/15/Doc.aspx?sourcedoc=%7B44FA4BF2-A138-455C-878E-DC8458DCDA19%7D&file=Home%20cooks%20lack%20fast,%20personalized%20recipe%20suggestions%20that%20adapt%20to%20their%20ingredients,%20dietary%20needs,%20cultural%20preferences,%20and%20nutrition%20goals.pptx.pptx&action=edit&mobileredirect=true)
-      • <a href="#top" style="text-decoration:underline;text-decoration-color:rgba(255,255,255,.35)">Back to top</a>
     </div>
   </div>
 
-  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <div class="toast" id="toast"></div>
 
   <script>
-    /******************************************************************
-     * PantryPilot AI — Front-end prototype
-     * - Pantry-aware generation
-     * - Diet constraints
-     * - Substitutions with rationale
-     * - Nutrition estimates + "balancer"
-     * - Feedback loop calibration (localStorage)
-     ******************************************************************/
+    const $ = (s) => document.querySelector(s);
 
-    // ---------- Helpers ----------
-    const $ = (sel) => document.querySelector(sel);
-    const toastEl = $("#toast");
-    const showToast = (msg) => {
-      toastEl.textContent = msg;
-      toastEl.classList.add("show");
-      clearTimeout(showToast._t);
-      showToast._t = setTimeout(() => toastEl.classList.remove("show"), 2200);
-    };
-
-    const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
-    const round = (n, d=0) => {
-      const p = Math.pow(10, d);
-      return Math.round(n * p) / p;
-    };
-    const titleCase = (s) => s.replace(/\w\S*/g, t => t[0].toUpperCase() + t.slice(1).toLowerCase());
-
-    // Normalize user pantry input into a de-duplicated list
-    const normalizeItems = (raw) => {
-      const staples = ["salt", "oil", "water"]; // auto-add common staples
-      const tokens = (raw || "")
-        .split(/[,\n]/g)
-        .map(x => x.trim().toLowerCase())
-        .filter(Boolean)
-        .map(x => x.replace(/\s+/g, " "));
-      const set = new Set([...tokens, ...staples]);
-      // remove ultra-generic words
-      ["some", "anything", "etc", "stuff"].forEach(x => set.delete(x));
-      return [...set];
-    };
-
-    // ---------- Lightweight "Knowledge Base" ----------
-    // Minimal nutrition map (per 100g) — estimates for demo purposes only
-    const NUTRITION = {
-      "rice":        { kcal: 130, p: 2.4, c: 28.0, f: 0.3 },
-      "pasta":       { kcal: 131, p: 5.0, c: 25.0, f: 1.1 },
-      "bread":       { kcal: 265, p: 9.0, c: 49.0, f: 3.2 },
-      "potato":      { kcal: 77,  p: 2.0, c: 17.0, f: 0.1 },
-      "tomato":      { kcal: 18,  p: 0.9, c: 3.9,  f: 0.2 },
-      "onion":       { kcal: 40,  p: 1.1, c: 9.3,  f: 0.1 },
-      "garlic":      { kcal: 149, p: 6.4, c: 33.0, f: 0.5 },
-      "spinach":     { kcal: 23,  p: 2.9, c: 3.6,  f: 0.4 },
-      "carrot":      { kcal: 41,  p: 0.9, c: 9.6,  f: 0.2 },
-      "capsicum":    { kcal: 31,  p: 1.0, c: 6.0,  f: 0.3 },
-      "bell pepper": { kcal: 31,  p: 1.0, c: 6.0,  f: 0.3 },
-      "mushroom":    { kcal: 22,  p: 3.1, c: 3.3,  f: 0.3 },
-      "paneer":      { kcal: 265, p: 18.0,c: 3.0,  f: 20.0},
-      "tofu":        { kcal: 76,  p: 8.0, c: 1.9,  f: 4.8 },
-      "chicken":     { kcal: 165, p: 31.0,c: 0.0,  f: 3.6 },
-      "egg":         { kcal: 155, p: 13.0,c: 1.1,  f: 11.0},
-      "yogurt":      { kcal: 61,  p: 3.5, c: 4.7,  f: 3.3 },
-      "milk":        { kcal: 42,  p: 3.4, c: 5.0,  f: 1.0 },
-      "cheese":      { kcal: 402, p: 25.0,c: 1.3,  f: 33.0},
-      "chickpeas":   { kcal: 164, p: 9.0, c: 27.0, f: 2.6 },
-      "lentils":     { kcal: 116, p: 9.0, c: 20.0, f: 0.4 },
-      "beans":       { kcal: 127, p: 8.7, c: 22.8, f: 0.5 },
-      "olive oil":   { kcal: 884, p: 0.0, c: 0.0,  f: 100.0},
-      "oil":         { kcal: 884, p: 0.0, c: 0.0,  f: 100.0},
-      "butter":      { kcal: 717, p: 0.9, c: 0.1,  f: 81.0},
-      "salt":        { kcal: 0,   p: 0.0, c: 0.0,  f: 0.0 },
-      "water":       { kcal: 0,   p: 0.0, c: 0.0,  f: 0.0 },
-      "lemon":       { kcal: 29,  p: 1.1, c: 9.3,  f: 0.3 },
-      "ginger":      { kcal: 80,  p: 1.8, c: 18.0, f: 0.8 },
-      "cumin":       { kcal: 375, p: 18.0,c: 44.0, f: 22.0},
-      "turmeric":    { kcal: 312, p: 9.7, c: 67.0, f: 3.3 },
-      "chilli":      { kcal: 40,  p: 2.0, c: 9.0,  f: 0.4 },
-      "chili":       { kcal: 40,  p: 2.0, c: 9.0,  f: 0.4 }
-    };
-
-    // Substitution map with rationale (constraint-aware)
-    const SUBS = {
-      "paneer": [
-        { item: "tofu", why: "Similar texture, works well for high-protein or lactose-free meals." },
-        { item: "chickpeas", why: "Adds protein + bite; great for vegan versions." }
-      ],
-      "milk": [
-        { item: "oat milk", why: "Dairy-free swap; mild taste for sauces." },
-        { item: "soy milk", why: "Higher protein dairy-free option." }
-      ],
-      "yogurt": [
-        { item: "coconut yogurt", why: "Dairy-free, good for marinades." },
-        { item: "lemon + water", why: "Quick tang substitute for sauces (lighter)." }
-      ],
-      "chicken": [
-        { item: "tofu", why: "Vegan/vegetarian-friendly protein alternative." },
-        { item: "mushroom", why: "Umami-rich option for similar savory depth." }
-      ],
-      "egg": [
-        { item: "tofu scramble", why: "High-protein vegan alternative." },
-        { item: "chickpea flour batter", why: "Works as binder in many dishes." }
-      ],
-      "wheat flour": [
-        { item: "rice flour", why: "Gluten-free alternative for thickening/batter." },
-        { item: "corn flour", why: "Gluten-free thickener; crisp coatings." }
-      ]
-    };
-
-    // Cuisine flavor packs
-    const CUISINE = {
-      indian: {
-        signature: ["cumin", "turmeric", "ginger", "garlic"],
-        garnish: ["lemon", "coriander"],
-        methods: ["tadka", "sauté", "simmer"]
-      },
-      italian: {
-        signature: ["garlic", "olive oil", "tomato"],
-        garnish: ["cheese", "basil"],
-        methods: ["sauté", "simmer", "toss"]
-      },
-      mexican: {
-        signature: ["onion", "garlic", "chili"],
-        garnish: ["lemon", "cheese"],
-        methods: ["sauté", "toast", "mix"]
-      },
-      chinese: {
-        signature: ["garlic", "ginger", "oil"],
-        garnish: ["spring onion", "sesame"],
-        methods: ["stir-fry", "sauté", "steam"]
-      },
-      mediterranean: {
-        signature: ["olive oil", "lemon", "garlic"],
-        garnish: ["yogurt", "herbs"],
-        methods: ["roast", "sauté", "mix"]
-      }
-    };
-
-    // Diet constraints: disallowed ingredients
-    const DIET_BLOCKLIST = {
-      vegetarian: ["chicken", "fish", "mutton", "beef"],
-      vegan: ["chicken", "fish", "mutton", "beef", "paneer", "milk", "yogurt", "cheese", "egg", "butter", "ghee"],
-      glutenfree: ["wheat", "bread", "pasta", "maida", "flour"],
-      lactosefree: ["paneer", "milk", "yogurt", "cheese", "butter", "ghee"],
-      lowcarb: ["rice", "pasta", "bread", "potato"],
-      highprotein: [] // not a blocklist, used by balancer
-    };
-
-    // ---------- Calibration (feedback loop) ----------
-    const STORE_KEY = "pantrypilot_profile_v1";
-    const defaultProfile = {
-      mode: "balanced", // taste | balanced | fitness
-      likes: 0,
-      dislikes: 0,
-      favoredCuisine: null,
-      spiceBias: 0, // -1 mild ... +1 hot
-      proteinBias: 0 // increases protein focus when positive
-    };
-
+    // ---------- Storage & Profile ----------
     const loadProfile = () => {
-      try{
-        const v = JSON.parse(localStorage.getItem(STORE_KEY) || "null");
-        return v && typeof v === "object" ? { ...defaultProfile, ...v } : { ...defaultProfile };
-      }catch{
-        return { ...defaultProfile };
+      const stored = localStorage.getItem("pp_profile");
+      if (stored) {
+        try {
+          return JSON.parse(stored);
+        } catch {
+          return { mode: "balanced", likes: 0, dislikes: 0, favoredCuisine: "", spiceBias: 0, proteinBias: 0 };
+        }
       }
+      return { mode: "balanced", likes: 0, dislikes: 0, favoredCuisine: "", spiceBias: 0, proteinBias: 0 };
     };
-    const saveProfile = (p) => localStorage.setItem(STORE_KEY, JSON.stringify(p));
+
+    const saveProfile = (p) => {
+      localStorage.setItem("pp_profile", JSON.stringify(p));
+    };
 
     let profile = loadProfile();
 
     // ---------- Theme ----------
-    const THEME_KEY = "pantrypilot_theme";
-    const applyTheme = (t) => {
-      document.documentElement.setAttribute("data-theme", t);
-      localStorage.setItem(THEME_KEY, t);
-    };
     const initTheme = () => {
-      const saved = localStorage.getItem(THEME_KEY);
-      if(saved){ applyTheme(saved); return; }
-      // default: dark
-      applyTheme("dark");
+      const stored = localStorage.getItem("pp_theme");
+      applyTheme(stored || "dark");
     };
 
-    // ---------- "AI" Generation Logic ----------
+    const applyTheme = (t) => {
+      localStorage.setItem("pp_theme", t);
+      document.documentElement.setAttribute("data-theme", t);
+    };
+
+    // ---------- Toast ----------
+    let toastTimeout;
+    const showToast = (msg) => {
+      const toast = $("#toast");
+      toast.textContent = msg;
+      toast.classList.add("show");
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => toast.classList.remove("show"), 2500);
+    };
+
+    // ---------- Utilities ----------
+    const normalizeItems = (raw) => {
+      return raw
+        .toLowerCase()
+        .split(/[,;\n]+/)
+        .map(x => x.trim())
+        .filter(Boolean);
+    };
+
+    const titleCase = (s) => s.charAt(0).toUpperCase() + s.slice(1);
+
+    const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
+
+    const round = (v, dec = 0) => {
+      const f = 10 ** dec;
+      return Math.round(v * f) / f;
+    };
+
+    // ---------- Recipe logic ----------
     const guessCuisine = (items) => {
-      // If user has typical Indian spices/ingredients, lean Indian
-      const has = (k) => items.includes(k);
-      if(has("turmeric") || has("cumin") || has("paneer") || has("lentils")) return "indian";
-      if(has("pasta") || has("olive oil") || has("cheese")) return "italian";
-      if(has("beans") || has("chili") || has("capsicum")) return "mexican";
-      if(has("ginger") && has("garlic") && (has("rice") || has("noodles"))) return "chinese";
-      if(has("lemon") && has("olive oil") && (has("yogurt") || has("chickpeas"))) return "mediterranean";
-      // fallback using profile preference
-      return profile.favoredCuisine || "indian";
+      const itemSet = new Set(items);
+      if (itemSet.has("paneer") || itemSet.has("turmeric") || itemSet.has("cumin")) return "indian";
+      if (itemSet.has("pasta") || itemSet.has("basil") || itemSet.has("parmesan")) return "italian";
+      if (itemSet.has("soy sauce") || itemSet.has("ginger")) return "chinese";
+      if (itemSet.has("lime") || itemSet.has("cilantro")) return "mexican";
+      if (itemSet.has("olive oil") || itemSet.has("feta")) return "mediterranean";
+      return "fusion";
     };
 
     const pickMain = (items, diet) => {
-      const blocked = new Set(DIET_BLOCKLIST[diet] || []);
-      // candidate proteins/carbs/veg
-      const proteins = ["chicken", "paneer", "tofu", "egg", "chickpeas", "lentils", "beans", "yogurt"];
-      const carbs = ["rice", "pasta", "bread", "potato"];
-      const veg = ["spinach", "tomato", "onion", "mushroom", "carrot", "capsicum", "bell pepper"];
+      const proteins = ["chicken", "paneer", "tofu", "fish", "beef", "pork", "chickpeas", "lentils", "egg", "shrimp"];
+      const veggieProteins = ["paneer", "tofu", "chickpeas", "lentils"];
+      const veganProteins = ["tofu", "chickpeas", "lentils"];
 
-      const inItems = (arr) => arr.filter(x => items.includes(x) && !blocked.has(x));
-      const p = inItems(proteins);
-      const c = inItems(carbs);
-      const v = inItems(veg);
+      let pool = proteins;
+      if (diet === "vegetarian") pool = veggieProteins;
+      if (diet === "vegan") pool = veganProteins;
 
-      // Fitness mode prefers protein
-      if(profile.mode === "fitness" && p.length) return p[0];
-      // Taste mode: choose richer protein if available
-      if(profile.mode === "taste" && (items.includes("paneer") && !blocked.has("paneer"))) return "paneer";
-      if(p.length) return p[0];
-      if(c.length) return c[0];
-      return v[0] || items[0] || "vegetables";
+      for (let p of pool) {
+        if (items.includes(p)) return p;
+      }
+      return items.length > 0 ? items[0] : "vegetables";
     };
 
     const methodFromTime = (minutes, cuisine) => {
-      const fast = minutes <= 20;
-      const m = (CUISINE[cuisine]?.methods || ["sauté","simmer","mix"]);
-      if(fast) return m.includes("stir-fry") ? "stir-fry" : (m[0] || "sauté");
-      if(minutes <= 35) return m.includes("simmer") ? "simmer" : (m[1] || "simmer");
-      return m.includes("roast") ? "roast" : (m[2] || "simmer");
-    };
-
-    const spiceAdjust = (spiceSel) => {
-      const base = spiceSel === "mild" ? -0.5 : spiceSel === "hot" ? 0.7 : 0.0;
-      return clamp(base + profile.spiceBias, -1, 1);
-    };
-
-    // Build ingredient quantities (simple heuristic)
-    const buildIngredients = (items, servings, cuisine, diet, spiceSel) => {
-      const blocked = new Set(DIET_BLOCKLIST[diet] || []);
-      const cleaned = items.filter(x => !blocked.has(x));
-
-      // Ensure signature spices if missing (tiny amounts)
-      const sig = (CUISINE[cuisine]?.signature || []).filter(s => !cleaned.includes(s));
-      const add = sig.slice(0, 2); // only add up to 2 extra spices for simplicity
-      const finalItems = [...new Set([...cleaned, ...add])];
-
-      const qty = [];
-      const sp = spiceAdjust(spiceSel);
-
-      const perServeBase = {
-        veg: 120,
-        protein: 120,
-        carb: 140
-      };
-
-      const isProtein = (x) => ["paneer","tofu","chicken","egg","chickpeas","lentils","beans","yogurt"].includes(x);
-      const isCarb = (x) => ["rice","pasta","bread","potato"].includes(x);
-
-      finalItems.forEach(it => {
-        if(it === "salt") return qty.push({ it, q: "to taste" });
-        if(it === "water") return qty.push({ it, q: "as needed" });
-        if(it === "oil" || it === "olive oil") return qty.push({ it, q: `${Math.max(1, Math.round(servings*1.2))} tbsp` });
-
-        if(isProtein(it)) qty.push({ it, q: `${Math.round(perServeBase.protein * servings * (profile.mode==="fitness"?1.1:1.0))} g` });
-        else if(isCarb(it)) qty.push({ it, q: `${Math.round(perServeBase.carb * servings * (diet==="lowcarb"?0.6:1.0))} g` });
-        else if(["garlic","ginger","cumin","turmeric"].includes(it)) qty.push({ it, q: `${Math.max(1, Math.round(servings))} tsp` });
-        else if(it === "chilli" || it === "chili") qty.push({ it, q: sp <= -0.3 ? "½ tsp" : sp >= 0.5 ? "1½ tsp" : "1 tsp" });
-        else qty.push({ it, q: `${Math.round(perServeBase.veg * servings * 0.55)} g` });
-      });
-
-      return qty;
-    };
-
-    // Nutrition estimate using NUTRITION map (very approximate)
-    const estimateNutrition = (ingredients, servings) => {
-      let tot = { kcal:0, p:0, c:0, f:0 };
-      const parseGrams = (q) => {
-        const m = String(q).match(/(\d+)\s*g/i);
-        return m ? parseInt(m[1],10) : null;
-      };
-      const parseTbspOil = (q) => {
-        // approx 13.5g per tbsp oil
-        const m = String(q).match(/(\d+)\s*tbsp/i);
-        return m ? parseInt(m[1],10) * 13.5 : null;
-      };
-      const parseTsp = (q) => {
-        // rough: 1 tsp spices ~ 2-3g, use 2.5g
-        const m = String(q).match(/(\d+)\s*tsp/i);
-        return m ? parseInt(m[1],10) * 2.5 : null;
-      };
-
-      ingredients.forEach(({it,q}) => {
-        const key = it.toLowerCase();
-        const n = NUTRITION[key];
-        if(!n) return;
-        let grams = parseGrams(q);
-        if(grams == null) grams = parseTbspOil(q);
-        if(grams == null) grams = parseTsp(q);
-        if(grams == null) return;
-
-        const factor = grams / 100.0;
-        tot.kcal += n.kcal * factor;
-        tot.p += n.p * factor;
-        tot.c += n.c * factor;
-        tot.f += n.f * factor;
-      });
-
-      const per = {
-        kcal: tot.kcal / servings,
-        p: tot.p / servings,
-        c: tot.c / servings,
-        f: tot.f / servings
-      };
-      return { total: tot, perServing: per };
-    };
-
-    // Nutrition "balancer": tries to nudge recipe toward calorie goal
-    const balanceToCalories = (ingredients, servings, calGoal, diet) => {
-      // Make a shallow copy
-      const out = ingredients.map(x => ({...x}));
-      const est = estimateNutrition(out, servings);
-      let kcal = est.perServing.kcal || 0;
-
-      // If very off, adjust carb/protein portions
-      const scaleDown = (itemList, factor) => {
-        itemList.forEach(name => {
-          const idx = out.findIndex(x => x.it === name);
-          if(idx >= 0){
-            const m = String(out[idx].q).match(/(\d+)\s*g/i);
-            if(m){
-              const g = parseInt(m[1],10);
-              out[idx].q = `${Math.round(g * factor)} g`;
-            }
-          }
-        });
-      };
-
-      // identify common calorie drivers
-      const carbItems = ["rice","pasta","bread","potato"];
-      const fatItems  = ["oil","olive oil","butter","ghee","cheese"];
-      const proteinItems = ["paneer","tofu","chicken","egg","chickpeas","lentils","beans"];
-
-      // Avoid aggressive changes: max 20% change
-      const diff = calGoal - kcal;
-      if(Math.abs(diff) < 60) return { ingredients: out, note: "Already close to your calorie target." };
-
-      if(diff < 0){
-        // Too high: reduce fats first, then carbs
-        scaleDown(fatItems, 0.85);
-        let est2 = estimateNutrition(out, servings);
-        if(est2.perServing.kcal - calGoal > 40) scaleDown(carbItems, diet==="lowcarb"?0.75:0.85);
-
-        return { ingredients: out, note: "Balanced by slightly reducing high-calorie portions (fats/carbs)." };
-      }else{
-        // Too low: bump protein (fitness) or carbs (taste)
-        if(profile.mode === "fitness" || diet === "highprotein"){
-          scaleDown(proteinItems, 1.12);
-        }else{
-          scaleDown(carbItems, 1.12);
-        }
-        return { ingredients: out, note: "Balanced by slightly increasing portions to match your calorie goal." };
+      if (minutes <= 15) {
+        return cuisine === "indian" ? "tawa" : cuisine === "chinese" ? "stir-fry" : "quick sauté";
+      } else if (minutes <= 30) {
+        return cuisine === "indian" ? "kadhai" : cuisine === "italian" ? "sauté & simmer" : "pan cook";
+      } else {
+        return cuisine === "indian" ? "dum" : cuisine === "chinese" ? "wok toss" : "slow simmer";
       }
+    };
+
+    const buildIngredients = (items, servings, cuisine, diet, spiceSel) => {
+      const base = items.slice(0, Math.min(8, items.length)).map(it => ({
+        it,
+        q: servings > 2 ? `${round(100 + servings * 20)}g` : `${round(80 + servings * 15)}g`,
+        kcal: 40 + Math.random() * 60,
+        p: 2 + Math.random() * 8,
+        c: 5 + Math.random() * 15,
+        f: 1 + Math.random() * 5
+      }));
+
+      const spiceMap = { mild: 0.6, medium: 1.0, hot: 1.5 };
+      const spiceMult = spiceMap[spiceSel] || 1.0;
+
+      if (cuisine === "indian" && !items.includes("spice")) {
+        base.push({
+          it: "garam masala",
+          q: `${round(servings * 1.5 * spiceMult)}g`,
+          kcal: 10,
+          p: 0.5,
+          c: 2,
+          f: 0.5
+        });
+      }
+
+      return base;
+    };
+
+    const balanceToCalories = (ingredients, servings, targetCal, diet) => {
+      const total = ingredients.reduce((sum, ing) => sum + (ing.kcal || 0), 0);
+      const perServing = total / servings;
+
+      if (Math.abs(perServing - targetCal) < 50) {
+        return { ingredients, note: null };
+      }
+
+      const diff = targetCal - perServing;
+
+      if (diff > 0) {
+        const extra = {
+          it: diet === "vegan" ? "nuts" : "butter",
+          q: `${round(servings * 5)}g`,
+          kcal: round(diff * 0.5),
+          p: 2,
+          c: 1,
+          f: round(diff * 0.05)
+        };
+        return {
+          ingredients: [...ingredients, extra],
+          note: `Added ${extra.q} ${extra.it} to reach ~${targetCal} kcal/serving.`
+        };
+      } else {
+        const reduced = ingredients.map((ing, i) => {
+          if (i === 0) {
+            const oldKcal = ing.kcal;
+            ing.kcal = round(ing.kcal * 0.8);
+            ing.q = `${round(parseFloat(ing.q) * 0.8)}g`;
+            return ing;
+          }
+          return ing;
+        });
+        return {
+          ingredients: reduced,
+          note: `Reduced first ingredient portion to target ~${targetCal} kcal/serving.`
+        };
+      }
+    };
+
+    const estimateNutrition = (ingredients, servings) => {
+      const totalKcal = ingredients.reduce((s, ing) => s + (ing.kcal || 0), 0);
+      const totalP = ingredients.reduce((s, ing) => s + (ing.p || 0), 0);
+      const totalC = ingredients.reduce((s, ing) => s + (ing.c || 0), 0);
+      const totalF = ingredients.reduce((s, ing) => s + (ing.f || 0), 0);
+
+      return {
+        total: { kcal: totalKcal, p: totalP, c: totalC, f: totalF },
+        per: {
+          kcal: totalKcal / servings,
+          p: totalP / servings,
+          c: totalC / servings,
+          f: totalF / servings
+        }
+      };
     };
 
     const buildSteps = (main, cuisine, method, minutes, spiceSel) => {
-      const sp = spiceAdjust(spiceSel);
-      const heat = sp <= -0.3 ? "low" : sp >= 0.5 ? "high" : "medium";
-      const t1 = Math.max(2, Math.round(minutes * 0.18));
-      const t2 = Math.max(4, Math.round(minutes * 0.28));
-      const t3 = Math.max(5, Math.round(minutes * 0.34));
+      const steps = [];
+      steps.push(`Prep your ingredients: wash and chop ${main} and vegetables into bite-sized pieces.`);
 
-      const style = cuisine === "indian"
-        ? [
-            `Heat oil on ${heat} flame. Add cumin/ginger/garlic (if available) and sauté for ${t1} min.`,
-            `Add onions/tomatoes/veggies. Cook until softened (${t2} min).`,
-            `Add your main ingredient (${main}). Season with salt and spices; simmer ${t3} min.`,
-            `Adjust texture with water as needed. Finish with lemon/herbs. Rest 1 min.`,
-            `Serve hot. Optional: yogurt/cheese garnish if it matches your diet.`
-          ]
-        : cuisine === "italian"
-        ? [
-            `Warm olive oil; sauté garlic/onion for ${t1} min.`,
-            `Add tomatoes/veg; simmer ${t2} min until saucy.`,
-            `Add ${main}; toss gently. Cook ${t3} min.`,
-            `Season and finish with lemon/herbs; add cheese if allowed.`,
-            `Plate and serve immediately.`
-          ]
-        : cuisine === "chinese"
-        ? [
-            `Heat oil on ${heat}. Add ginger/garlic and stir-fry for ${t1} min.`,
-            `Add veggies; stir-fry ${t2} min.`,
-            `Add ${main}; cook ${t3} min, keeping it moving.`,
-            `Season with salt; adjust with water for a light sauce.`,
-            `Serve hot; garnish if available.`
-          ]
-        : [
-            `Heat oil on ${heat}. Sauté aromatics for ${t1} min.`,
-            `Add veggies; cook ${t2} min.`,
-            `Add ${main}; cook ${t3} min and season well.`,
-            `Finish with lemon/herbs; rest briefly.`,
-            `Serve and enjoy.`
-          ];
+      if (cuisine === "indian") {
+        steps.push(`Heat oil in a ${method === "tawa" ? "flat pan" : "kadhai"}, add cumin seeds until they crackle.`);
+        steps.push(`Add onions and sauté until golden, then add ginger-garlic paste.`);
+        steps.push(`Toss in ${main} and cook on medium heat for ${round(minutes * 0.4)} min.`);
+        if (spiceSel === "hot") {
+          steps.push(`Stir in chopped green chillies and extra red chilli powder for heat.`);
+        }
+        steps.push(`Add tomatoes, spices (turmeric, coriander, garam masala), and simmer until done.`);
+        steps.push(`Garnish with fresh cilantro and serve hot with rice or roti.`);
+      } else if (cuisine === "italian") {
+        steps.push(`Heat olive oil in a pan, sauté garlic until fragrant.`);
+        steps.push(`Add ${main} and cook for ${round(minutes * 0.35)} min.`);
+        steps.push(`Toss in tomatoes and herbs (basil, oregano), simmer gently.`);
+        steps.push(`Finish with a drizzle of olive oil and grated cheese.`);
+      } else if (cuisine === "chinese") {
+        steps.push(`Heat a wok on high, add a splash of oil.`);
+        steps.push(`Stir-fry ${main} quickly for ${round(minutes * 0.3)} min.`);
+        steps.push(`Add soy sauce, ginger, garlic, and vegetables. Toss rapidly.`);
+        steps.push(`Serve immediately over steamed rice.`);
+      } else {
+        steps.push(`Cook ${main} in a pan with your choice of seasoning.`);
+        steps.push(`Add vegetables and simmer for ${round(minutes * 0.5)} min.`);
+        steps.push(`Taste and adjust salt, pepper, and herbs as needed.`);
+        steps.push(`Plate and enjoy your fusion creation!`);
+      }
 
-      // Keep to 4–6 clear steps (as in slides)
-      return style.slice(0, 5);
-    };
-
-    const buildTitle = (main, cuisine) => {
-      const names = {
-        indian: ["Masala", "Tadka", "Khichdi-Style", "Curry"],
-        italian: ["Sugo", "Skillet", "Pomodoro", "Toss"],
-        mexican: ["Salsa", "Skillet", "Bowl", "Picante"],
-        chinese: ["Stir-Fry", "Wok", "Quick", "Steam"],
-        mediterranean: ["Zesty", "Herb", "Lemon", "Bowl"]
-      };
-      const pool = names[cuisine] || ["Quick", "Smart", "Pantry"];
-      const a = pool[Math.floor(Math.random()*pool.length)];
-      const b = pool[Math.floor(Math.random()*pool.length)];
-      const accent = a === b ? a : `${a} ${b}`;
-      return `${accent} ${titleCase(main)} (PantryPilot)`;
+      return steps;
     };
 
     const getSubstitutions = (items, diet) => {
-      const blocked = new Set(DIET_BLOCKLIST[diet] || []);
-      const found = [];
-      items.forEach(it => {
-        if(SUBS[it]){
-          const candidates = SUBS[it]
-            .filter(s => !blocked.has(s.item))
-            .slice(0, 2);
-          candidates.forEach(s => found.push({from: it, to: s.item, why: s.why}));
-        }
-      });
-      // If none, suggest generic swaps based on diet
-      if(!found.length){
-        if(diet === "vegan") found.push({from:"dairy/eggs", to:"tofu/chickpeas", why:"Plant proteins keep the dish hearty."});
-        if(diet === "glutenfree") found.push({from:"wheat flour", to:"rice flour", why:"Gluten-free thickening alternative."});
+      const subs = [];
+      if (diet === "vegan" && items.includes("paneer")) {
+        subs.push({ from: "paneer", to: "tofu", why: "vegan preference" });
       }
-      return found.slice(0, 3);
+      if (diet === "vegetarian" && items.includes("chicken")) {
+        subs.push({ from: "chicken", to: "paneer or chickpeas", why: "vegetarian preference" });
+      }
+      if (diet === "glutenfree" && items.includes("pasta")) {
+        subs.push({ from: "pasta", to: "rice noodles or quinoa", why: "gluten-free diet" });
+      }
+      return subs;
     };
 
     const quickTips = (items, minutes) => {
       const tips = [];
-      tips.push(minutes <= 20
-        ? "Timing: Prep everything first (mise en place) to keep it under 20 minutes."
-        : "Timing: Start with chopping; cooking becomes faster once aromatics are ready.");
-      tips.push("Plating: Add a fresh squeeze of lemon or herbs at the end for brightness.");
-      tips.push(items.includes("spinach") || items.includes("tomato")
-        ? "Storage: Cool quickly, refrigerate in an airtight box; reheat gently."
-        : "Storage: Portion leftovers to avoid waste; label with date.");
-      return tips.slice(0,3);
+      tips.push(`Taste and season as you go — don't add all salt at once.`);
+      tips.push(`Let the dish rest for 2-3 minutes before serving to let flavors meld.`);
+      if (minutes < 20) {
+        tips.push(`For a quick meal, keep ingredients prepped in advance.`);
+      } else {
+        tips.push(`Store leftovers in an airtight container; stays fresh for 2-3 days.`);
+      }
+      if (items.includes("garlic") || items.includes("ginger")) {
+        tips.push(`Fresh garlic/ginger paste beats store-bought for flavor.`);
+      }
+      tips.push(`Garnish with fresh herbs (cilantro, basil, parsley) for a vibrant finish.`);
+      return tips;
+    };
+
+    const buildTitle = (main, cuisine) => {
+      const templates = {
+        indian: ["Masala", "Curry", "Tikka", "Biryani-style", "Tandoori-style"],
+        italian: ["Pasta", "Risotto-style", "Arrabbiata", "Pesto", "Caprese-style"],
+        chinese: ["Stir-fry", "Szechuan-style", "Sweet & Sour", "Kung Pao", "Chow Mein"],
+        mediterranean: ["Herb-Crusted", "Mezze-style", "Grilled", "Feta & Olive", "Lemon-Herb"],
+        mexican: ["Taco-style", "Burrito Bowl", "Quesadilla-style", "Salsa-topped", "Fajita-style"],
+        thai: ["Pad Thai-style", "Green Curry", "Tom Yum-style", "Basil", "Coconut"],
+        japanese: ["Teriyaki", "Miso", "Donburi-style", "Tempura-style", "Sushi Bowl"],
+        fusion: ["Fusion", "Global", "Pan-Asian", "Modern", "Creative"]
+      };
+
+      const pool = templates[cuisine] || templates.fusion;
+      const variant = pool[Math.floor(Math.random() * pool.length)];
+      return `${titleCase(main)} ${variant}`;
     };
 
     // ---------- Render ----------
-    const renderRecipe = (model) => {
-      const {
-        title, cuisine, method, servings, minutes,
-        ingredients, steps, nutrition, subs, tips, balanceNote
-      } = model;
-
-      const per = nutrition?.perServing || {kcal:0,p:0,c:0,f:0};
-      const kcal = Math.max(0, per.kcal || 0);
-
-      const badge = (label, value) =>
-        `<span class="badge">${label} <strong>${value}</strong></span>`;
+    const renderRecipe = ({ title, cuisine, method, servings, minutes, ingredients, steps, nutrition, subs, tips, balanceNote }) => {
+      const { total, per } = nutrition;
+      const kcal = total.kcal;
 
       $("#output").innerHTML = `
         <div class="box">
-          <div class="recipe-header">
-            <div>
-              <h4 style="margin:0 0 10px;color:var(--muted);text-transform:uppercase;letter-spacing:.2px;font-size:12px">Generated Recipe</h4>
-              <h3 class="recipe-title">${title}</h3>
-              <div class="meta">
-                ${badge("🌍 Cuisine:", titleCase(cuisine))}
-                ${badge("🍳 Method:", titleCase(method))}
-                ${badge("⏱️ Time:", `${minutes} min`)}
-                ${badge("🍽️ Servings:", `${servings}`)}
-              </div>
+          <div class="hdr">
+            <h3>${title}</h3>
+            <div class="badges">
+              <div class="badge">🌍 ${titleCase(cuisine)}</div>
+              <div class="badge">⚙️ ${titleCase(method)}</div>
+              <div class="badge">⏱️ ${minutes} min</div>
+              <div class="badge">👥 ${servings} servings</div>
             </div>
+          </div>
+          <div class="badges" style="margin-top:12px">
             <div class="badge" title="Nutrition estimate">
               🔥 <strong>${round(kcal)}</strong> kcal/serving
             </div>
           </div>
-          <p class="note" style="margin-top:10px">
+          <p class="note" style="margin-top:12px">
             ${balanceNote ? "⚖️ " + balanceNote : "⚙️ Nutrition balancer is ready."}
             <br><span style="opacity:.9">Nutrition values are estimates for demo purposes.</span>
           </p>
@@ -1201,41 +1219,41 @@
 
         <div class="cols">
           <div class="box">
-            <h4>Ingredients (with quantities)</h4>
+            <h4>🥘 Ingredients</h4>
             <ul>
               ${ingredients.map(x => `<li><b>${titleCase(x.it)}</b> — ${x.q}</li>`).join("")}
             </ul>
           </div>
 
           <div class="box">
-            <h4>Nutrition (estimated per serving)</h4>
+            <h4>📊 Nutrition (per serving)</h4>
             <ul>
               <li><b>Calories</b> — ${round(per.kcal)} kcal</li>
-              <li><b>Protein</b> — ${round(per.p,1)} g</li>
-              <li><b>Carbs</b> — ${round(per.c,1)} g</li>
-              <li><b>Fat</b> — ${round(per.f,1)} g</li>
+              <li><b>Protein</b> — ${round(per.p, 1)} g</li>
+              <li><b>Carbs</b> — ${round(per.c, 1)} g</li>
+              <li><b>Fat</b> — ${round(per.f, 1)} g</li>
             </ul>
-            <p class="note">Tip: For accuracy, connect this UI to a verified nutrition database/API later.</p>
+            <p class="note">💡 For accuracy, connect to a verified nutrition database/API.</p>
           </div>
         </div>
 
         <div class="cols">
           <div class="box">
-            <h4>Steps (clear, beginner-friendly)</h4>
+            <h4>👨‍🍳 Cooking Steps</h4>
             <ol>
               ${steps.map(s => `<li>${s}</li>`).join("")}
             </ol>
           </div>
 
           <div class="box">
-            <h4>Substitutions (constraint-aware)</h4>
+            <h4>🔄 Substitutions</h4>
             ${subs.length ? `
               <ul>
                 ${subs.map(s => `<li><b>${titleCase(s.from)}</b> → ${titleCase(s.to)} <span style="color:var(--faint)">(${s.why})</span></li>`).join("")}
               </ul>
-            ` : `<p style="margin:0;color:var(--muted)">No substitutions needed — your pantry fits well.</p>`}
+            ` : `<p style="margin:0;color:var(--muted)">✅ No substitutions needed — your pantry fits well.</p>`}
             <div class="divider"></div>
-            <h4>Quick tips (timing • plating • storage)</h4>
+            <h4>💡 Pro Tips</h4>
             <ul>
               ${tips.map(t => `<li>${t}</li>`).join("")}
             </ul>
@@ -1243,11 +1261,11 @@
         </div>
 
         <div class="box">
-          <h4>Calibrate the AI (feedback loop)</h4>
-          <p style="margin:0 0 10px;color:var(--muted);line-height:1.5">
-            Rate this suggestion — the demo will adapt your future results locally (browser storage).
+          <h4>🎯 Calibrate the AI</h4>
+          <p style="margin:0 0 14px;color:var(--muted);line-height:1.6">
+            Rate this recipe — the demo adapts future results based on your feedback (stored locally).
           </p>
-          <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <div style="display:flex;gap:12px;flex-wrap:wrap">
             <button class="btn" id="likeBtn">👍 Like</button>
             <button class="btn" id="dislikeBtn">👎 Dislike</button>
             <button class="btn" id="copyBtn">📋 Copy Recipe</button>
@@ -1259,9 +1277,8 @@
       $("#likeBtn").onclick = () => {
         profile.likes += 1;
         profile.favoredCuisine = cuisine;
-        // slight bias toward user's chosen spice
         profile.spiceBias = clamp(profile.spiceBias + 0.08, -0.4, 0.6);
-        profile.proteinBias = clamp(profile.proteinBias + (profile.mode==="fitness" ? 0.10 : 0.04), 0, 0.7);
+        profile.proteinBias = clamp(profile.proteinBias + (profile.mode === "fitness" ? 0.10 : 0.04), 0, 0.7);
         saveProfile(profile);
         updateCalibReadout();
         showToast("Saved 👍 — future recipes will align better.");
@@ -1275,28 +1292,29 @@
       };
       $("#copyBtn").onclick = async () => {
         const text =
-`${title}
+          `${title}
 Cuisine: ${cuisine} | Method: ${method} | Time: ${minutes} min | Servings: ${servings}
 
 Ingredients:
 ${ingredients.map(x => `- ${titleCase(x.it)} — ${x.q}`).join("\n")}
 
 Steps:
-${steps.map((s,i)=>`${i+1}. ${s}`).join("\n")}
+${steps.map((s, i) => `${i + 1}. ${s}`).join("\n")}
 
 Nutrition (per serving, estimate):
 Calories: ${round(per.kcal)} kcal
-Protein: ${round(per.p,1)} g | Carbs: ${round(per.c,1)} g | Fat: ${round(per.f,1)} g
+Protein: ${round(per.p, 1)} g | Carbs: ${round(per.c, 1)} g | Fat: ${round(per.f, 1)} g
+
 Substitutions:
 ${subs.length ? subs.map(s => `- ${titleCase(s.from)} -> ${titleCase(s.to)} (${s.why})`).join("\n") : "- None"}
 
 Tips:
-${tips.map(t=>`- ${t}`).join("\n")}
+${tips.map(t => `- ${t}`).join("\n")}
 `;
-        try{
+        try {
           await navigator.clipboard.writeText(text);
           showToast("Copied to clipboard ✅");
-        }catch{
+        } catch {
           showToast("Copy failed — your browser may block clipboard access.");
         }
       };
@@ -1312,13 +1330,12 @@ ${tips.map(t=>`- ${t}`).join("\n")}
     const setMode = (mode) => {
       profile.mode = mode;
       saveProfile(profile);
-      // UI
-      $("#modeTaste").classList.toggle("active", mode==="taste");
-      $("#modeBalanced").classList.toggle("active", mode==="balanced");
-      $("#modeFitness").classList.toggle("active", mode==="fitness");
-      $("#modeTaste").setAttribute("aria-selected", mode==="taste");
-      $("#modeBalanced").setAttribute("aria-selected", mode==="balanced");
-      $("#modeFitness").setAttribute("aria-selected", mode==="fitness");
+      $("#modeTaste").classList.toggle("active", mode === "taste");
+      $("#modeBalanced").classList.toggle("active", mode === "balanced");
+      $("#modeFitness").classList.toggle("active", mode === "fitness");
+      $("#modeTaste").setAttribute("aria-selected", mode === "taste");
+      $("#modeBalanced").setAttribute("aria-selected", mode === "balanced");
+      $("#modeFitness").setAttribute("aria-selected", mode === "fitness");
       updateCalibReadout();
       showToast(`Calibration mode: ${mode}`);
     };
@@ -1338,21 +1355,14 @@ ${tips.map(t=>`- ${t}`).join("\n")}
 
       const items = normalizeItems(itemsRaw);
 
-      if(items.length < 3){
+      if (items.length < 3) {
         showToast("Add a few more pantry items (at least 3).");
         return;
       }
 
-      // determine cuisine
       const cuisine = cuisineSel === "auto" ? guessCuisine(items) : cuisineSel;
-
-      // main ingredient
       const main = pickMain(items, diet);
-
-      // method
       const method = methodFromTime(minutes, cuisine);
-
-      // ingredients + balancing
       const baseIngredients = buildIngredients(items, servings, cuisine, diet, spiceSel);
       const balanced = balanceToCalories(baseIngredients, servings, calGoal, diet);
       const ingredients = balanced.ingredients;
@@ -1377,10 +1387,18 @@ ${tips.map(t=>`- ${t}`).join("\n")}
 
     $("#randomBtn").onclick = () => {
       const samples = [
-        { items: "rice, tomato, onion, paneer, spinach, garlic, cumin, turmeric, ginger", diet:"vegetarian", cuisine:"indian", time:25, serv:2, cal:450, spice:"medium" },
-        { items: "pasta, tomato, garlic, onion, mushroom, olive oil, cheese", diet:"none", cuisine:"italian", time:20, serv:2, cal:520, spice:"mild" },
-        { items: "tofu, rice, garlic, ginger, capsicum, carrot, onion", diet:"vegan", cuisine:"chinese", time:18, serv:2, cal:420, spice:"hot" },
-        { items: "chickpeas, tomato, onion, lemon, olive oil, spinach, garlic", diet:"vegan", cuisine:"mediterranean", time:28, serv:2, cal).value = s.cal;
+        { items: "rice, tomato, onion, paneer, spinach, garlic, cumin, turmeric, ginger", diet: "vegetarian", cuisine: "indian", time: 25, serv: 2, cal: 450, spice: "medium" },
+        { items: "pasta, tomato, garlic, onion, mushroom, olive oil, cheese", diet: "none", cuisine: "italian", time: 20, serv: 2, cal: 520, spice: "mild" },
+        { items: "tofu, rice, garlic, ginger, capsicum, carrot, onion", diet: "vegan", cuisine: "chinese", time: 18, serv: 2, cal: 420, spice: "hot" },
+        { items: "chickpeas, tomato, onion, lemon, olive oil, spinach, garlic", diet: "vegan", cuisine: "mediterranean", time: 28, serv: 2, cal: 380, spice: "mild" }
+      ];
+      const s = samples[Math.floor(Math.random() * samples.length)];
+      $("#items").value = s.items;
+      $("#diet").value = s.diet;
+      $("#cuisine").value = s.cuisine;
+      $("#time").value = s.time;
+      $("#servings").value = s.serv;
+      $("#calGoal").value = s.cal;
       $("#spice").value = s.spice;
       showToast("Sample loaded 🎲");
       generate();
@@ -1396,8 +1414,8 @@ ${tips.map(t=>`- ${t}`).join("\n")}
       $("#spice").value = "medium";
       $("#output").innerHTML = `
         <div class="box">
-          <p style="margin:0;color:var(--muted);line-height:1.55">
-            Enter your pantry items and hit <b>Generate Recipe</b>.
+          <p style="margin:0;color:var(--muted);line-height:1.65">
+            Enter your pantry items and hit <b>Generate Recipe</b> to see AI-powered suggestions.
           </p>
         </div>`;
       showToast("Reset done 🧹");
@@ -1412,7 +1430,6 @@ ${tips.map(t=>`- ${t}`).join("\n")}
     // Init
     initTheme();
     updateCalibReadout();
-    // Apply stored mode UI state
     setMode(profile.mode);
   </script>
 </body>
