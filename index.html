@@ -1287,3 +1287,133 @@ ${steps.map((s,i)=>`${i+1}. ${s}`).join("\n")}
 Nutrition (per serving, estimate):
 Calories: ${round(per.kcal)} kcal
 Protein: ${round(per.p,1)} g | Carbs: ${round(per.c,1)} g | Fat: ${round(per.f,1)} g
+Substitutions:
+${subs.length ? subs.map(s => `- ${titleCase(s.from)} -> ${titleCase(s.to)} (${s.why})`).join("\n") : "- None"}
+
+Tips:
+${tips.map(t=>`- ${t}`).join("\n")}
+`;
+        try{
+          await navigator.clipboard.writeText(text);
+          showToast("Copied to clipboard ✅");
+        }catch{
+          showToast("Copy failed — your browser may block clipboard access.");
+        }
+      };
+    };
+
+    // ---------- UI Wiring ----------
+    const updateCalibReadout = () => {
+      const label = profile.mode === "taste" ? "Taste-first" : profile.mode === "fitness" ? "Fitness-first" : "Balanced";
+      $("#calibReadout").textContent =
+        `Profile: ${label} • Learned likes: ${profile.likes} • Dislikes: ${profile.dislikes}`;
+    };
+
+    const setMode = (mode) => {
+      profile.mode = mode;
+      saveProfile(profile);
+      // UI
+      $("#modeTaste").classList.toggle("active", mode==="taste");
+      $("#modeBalanced").classList.toggle("active", mode==="balanced");
+      $("#modeFitness").classList.toggle("active", mode==="fitness");
+      $("#modeTaste").setAttribute("aria-selected", mode==="taste");
+      $("#modeBalanced").setAttribute("aria-selected", mode==="balanced");
+      $("#modeFitness").setAttribute("aria-selected", mode==="fitness");
+      updateCalibReadout();
+      showToast(`Calibration mode: ${mode}`);
+    };
+
+    $("#modeTaste").onclick = () => setMode("taste");
+    $("#modeBalanced").onclick = () => setMode("balanced");
+    $("#modeFitness").onclick = () => setMode("fitness");
+
+    const generate = () => {
+      const itemsRaw = $("#items").value;
+      const diet = $("#diet").value;
+      const cuisineSel = $("#cuisine").value;
+      const minutes = clamp(parseInt($("#time").value || "25", 10), 5, 180);
+      const servings = clamp(parseInt($("#servings").value || "2", 10), 1, 10);
+      const calGoal = clamp(parseInt($("#calGoal").value || "450", 10), 150, 1200);
+      const spiceSel = $("#spice").value;
+
+      const items = normalizeItems(itemsRaw);
+
+      if(items.length < 3){
+        showToast("Add a few more pantry items (at least 3).");
+        return;
+      }
+
+      // determine cuisine
+      const cuisine = cuisineSel === "auto" ? guessCuisine(items) : cuisineSel;
+
+      // main ingredient
+      const main = pickMain(items, diet);
+
+      // method
+      const method = methodFromTime(minutes, cuisine);
+
+      // ingredients + balancing
+      const baseIngredients = buildIngredients(items, servings, cuisine, diet, spiceSel);
+      const balanced = balanceToCalories(baseIngredients, servings, calGoal, diet);
+      const ingredients = balanced.ingredients;
+
+      const nutrition = estimateNutrition(ingredients, servings);
+      const steps = buildSteps(main, cuisine, method, minutes, spiceSel);
+      const subs = getSubstitutions(items, diet);
+      const tips = quickTips(items, minutes);
+
+      const title = buildTitle(main, cuisine);
+
+      renderRecipe({
+        title, cuisine, method, servings, minutes,
+        ingredients, steps, nutrition, subs, tips,
+        balanceNote: balanced.note
+      });
+
+      showToast("Recipe generated ⚡");
+    };
+
+    $("#generateBtn").onclick = generate;
+
+    $("#randomBtn").onclick = () => {
+      const samples = [
+        { items: "rice, tomato, onion, paneer, spinach, garlic, cumin, turmeric, ginger", diet:"vegetarian", cuisine:"indian", time:25, serv:2, cal:450, spice:"medium" },
+        { items: "pasta, tomato, garlic, onion, mushroom, olive oil, cheese", diet:"none", cuisine:"italian", time:20, serv:2, cal:520, spice:"mild" },
+        { items: "tofu, rice, garlic, ginger, capsicum, carrot, onion", diet:"vegan", cuisine:"chinese", time:18, serv:2, cal:420, spice:"hot" },
+        { items: "chickpeas, tomato, onion, lemon, olive oil, spinach, garlic", diet:"vegan", cuisine:"mediterranean", time:28, serv:2, cal).value = s.cal;
+      $("#spice").value = s.spice;
+      showToast("Sample loaded 🎲");
+      generate();
+    };
+
+    $("#resetBtn").onclick = () => {
+      $("#items").value = "";
+      $("#diet").value = "none";
+      $("#cuisine").value = "auto";
+      $("#time").value = 25;
+      $("#servings").value = 2;
+      $("#calGoal").value = 450;
+      $("#spice").value = "medium";
+      $("#output").innerHTML = `
+        <div class="box">
+          <p style="margin:0;color:var(--muted);line-height:1.55">
+            Enter your pantry items and hit <b>Generate Recipe</b>.
+          </p>
+        </div>`;
+      showToast("Reset done 🧹");
+    };
+
+    $("#themeBtn").onclick = () => {
+      const cur = document.documentElement.getAttribute("data-theme") || "dark";
+      applyTheme(cur === "dark" ? "light" : "dark");
+      showToast("Theme updated 🌗");
+    };
+
+    // Init
+    initTheme();
+    updateCalibReadout();
+    // Apply stored mode UI state
+    setMode(profile.mode);
+  </script>
+</body>
+</html>
