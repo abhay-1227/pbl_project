@@ -51,15 +51,6 @@ DOM Manipulation.
 LocalStorage API: For persisting user data and history client-side.
 Dynamic rendering of food logs and yoga grids.
 
-📸 Screenshots
-(Replace the placeholder links below with your actual screenshots after uploading them to your repository)
-Home Dashboard
-Nutrition Tracker
-
-Yoga Library
-Mobile View
-
-
 🚀 How to Run
 Since this is a client-side application, no server installation (Node.js, Python, etc.) is required.
 Clone the Repository
