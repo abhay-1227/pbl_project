@@ -1,463 +1,2388 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PantryPilot AI - Your Personal Nutrition & Wellness Companion</title>
-  <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FitLife India - Wellness & Nutrition</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0f0d;
+            --bg-secondary: #121a16;
+            --fg-primary: #f0f5f1;
+            --fg-secondary: #9ca89f;
+            --accent: #00d4aa;
+            --accent-warm: #ff6b35;
+            --accent-gold: #ffc857;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.12);
+            --shadow-glow: rgba(0, 212, 170, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg-primary);
+            color: var(--fg-primary);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        /* Animated Background */
+        .bg-animated {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: 
+                radial-gradient(ellipse at 20% 20%, rgba(0, 212, 170, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(255, 107, 53, 0.06) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(255, 200, 87, 0.04) 0%, transparent 60%),
+                var(--bg-primary);
+        }
+
+        .floating-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            animation: float 20s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        .orb-1 {
+            width: 400px;
+            height: 400px;
+            background: rgba(0, 212, 170, 0.15);
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .orb-2 {
+            width: 300px;
+            height: 300px;
+            background: rgba(255, 107, 53, 0.12);
+            top: 60%;
+            right: 10%;
+            animation-delay: -7s;
+        }
+
+        .orb-3 {
+            width: 250px;
+            height: 250px;
+            background: rgba(255, 200, 87, 0.1);
+            bottom: 20%;
+            left: 30%;
+            animation-delay: -14s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(30px, -30px) scale(1.05); }
+            50% { transform: translate(-20px, 20px) scale(0.95); }
+            75% { transform: translate(20px, 30px) scale(1.02); }
+        }
+
+        /* Glassmorphism */
+        .glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+        }
+
+        .glass-strong {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+
+        .glass-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 24px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(0, 212, 170, 0.3);
+            box-shadow: 0 20px 60px rgba(0, 212, 170, 0.15);
+        }
+
+        /* Navigation */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 1rem 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .navbar.scrolled {
+            background: rgba(10, 15, 13, 0.9);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--fg-primary);
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-gold) 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .nav-link {
+            position: relative;
+            color: var(--fg-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            padding: 0.5rem 0;
+            transition: color 0.3s ease;
+            cursor: pointer;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent), var(--accent-gold));
+            transition: width 0.3s ease;
+            border-radius: 2px;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: var(--fg-primary);
+        }
+
+        .nav-link:hover::after, .nav-link.active::after {
+            width: 100%;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--fg-secondary);
+            border: 1px solid transparent;
+        }
+
+        .btn-ghost:hover {
+            color: var(--fg-primary);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent) 0%, #00b894 100%);
+            color: var(--bg-primary);
+            box-shadow: 0 4px 20px rgba(0, 212, 170, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0, 212, 170, 0.4);
+        }
+
+        .btn-warm {
+            background: linear-gradient(135deg, var(--accent-warm) 0%, #e55a2b 100%);
+            color: white;
+            box-shadow: 0 4px 20px rgba(255, 107, 53, 0.3);
+        }
+
+        .btn-warm:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(255, 107, 53, 0.4);
+        }
+
+        /* Mobile Menu */
+        .mobile-menu-btn {
+            display: none;
+            background: transparent;
+            border: none;
+            color: var(--fg-primary);
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(10, 15, 13, 0.98);
+            backdrop-filter: blur(20px);
+            z-index: 999;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
+        }
+
+        .mobile-menu.active {
+            display: flex;
+        }
+
+        .mobile-nav-link {
+            color: var(--fg-primary);
+            text-decoration: none;
+            font-size: 1.5rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* Pages */
+        .page {
+            display: none;
+            min-height: 100vh;
+            padding-top: 100px;
+        }
+
+        .page.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: calc(100vh - 100px);
+            display: flex;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .hero-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .hero-text h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-text h1 span {
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-gold) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-text p {
+            font-size: 1.125rem;
+            color: var(--fg-secondary);
+            margin-bottom: 2rem;
+            max-width: 500px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .hero-visual {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .hero-card-container {
+            position: relative;
+            width: 100%;
+            max-width: 450px;
+        }
+
+        .hero-card {
+            padding: 2rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .stat-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--fg-secondary);
+            margin-top: 0.25rem;
+        }
+
+        /* Features Section */
+        .section {
+            padding: 6rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-header h2 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            margin-bottom: 1rem;
+        }
+
+        .section-header p {
+            color: var(--fg-secondary);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .feature-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 1.5rem;
+            background: linear-gradient(135deg, rgba(0, 212, 170, 0.2) 0%, rgba(255, 200, 87, 0.2) 100%);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent);
+        }
+
+        .feature-card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .feature-card p {
+            color: var(--fg-secondary);
+            font-size: 0.95rem;
+        }
+
+        /* Nutrition Page */
+        .nutrition-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .nutrition-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .nutrition-header h1 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            margin-bottom: 0.5rem;
+        }
+
+        .nutrition-header p {
+            color: var(--fg-secondary);
+        }
+
+        .nutrition-grid {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 2rem;
+        }
+
+        .nutrition-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .calorie-card {
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .calorie-ring {
+            width: 180px;
+            height: 180px;
+            margin: 0 auto 1.5rem;
+            position: relative;
+        }
+
+        .calorie-ring svg {
+            transform: rotate(-90deg);
+        }
+
+        .calorie-ring-bg {
+            fill: none;
+            stroke: rgba(255, 255, 255, 0.1);
+            stroke-width: 12;
+        }
+
+        .calorie-ring-progress {
+            fill: none;
+            stroke: url(#calorieGradient);
+            stroke-width: 12;
+            stroke-linecap: round;
+            stroke-dasharray: 502;
+            stroke-dashoffset: 502;
+            transition: stroke-dashoffset 1s ease;
+        }
+
+        .calorie-value {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .calorie-value .number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .calorie-value .unit {
+            font-size: 0.9rem;
+            color: var(--fg-secondary);
+        }
+
+        .macro-card {
+            padding: 1.5rem;
+        }
+
+        .macro-item {
+            margin-bottom: 1rem;
+        }
+
+        .macro-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .macro-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .macro-bar {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .macro-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        .macro-fill.protein { background: linear-gradient(90deg, #00d4aa, #00b894); }
+        .macro-fill.carbs { background: linear-gradient(90deg, #ffc857, #f4a236); }
+        .macro-fill.fats { background: linear-gradient(90deg, #ff6b35, #e55a2b); }
+
+        .food-log-section {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .add-food-card {
+            padding: 1.5rem;
+        }
+
+        .add-food-card h3 {
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .food-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            font-size: 0.85rem;
+            color: var(--fg-secondary);
+        }
+
+        .form-input {
+            padding: 0.75rem 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: var(--fg-primary);
+            font-family: inherit;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(0, 212, 170, 0.1);
+        }
+
+        .form-input::placeholder {
+            color: var(--fg-secondary);
+        }
+
+        .food-log-card {
+            padding: 1.5rem;
+            flex: 1;
+        }
+
+        .food-log-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .food-log-header h3 {
+            font-size: 1.1rem;
+        }
+
+        .food-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .food-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            transition: all 0.3s ease;
+        }
+
+        .food-item:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .food-info h4 {
+            font-size: 0.95rem;
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+
+        .food-info span {
+            font-size: 0.8rem;
+            color: var(--fg-secondary);
+        }
+
+        .food-calories {
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        .delete-food {
+            background: transparent;
+            border: none;
+            color: var(--fg-secondary);
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .delete-food:hover {
+            color: #ff6b6b;
+            background: rgba(255, 107, 107, 0.1);
+        }
+
+        .history-card {
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .history-card h3 {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+            font-size: 0.9rem;
+        }
+
+        .history-date {
+            color: var(--fg-secondary);
+        }
+
+        .history-calories {
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        /* Yoga Page */
+        .yoga-hero {
+            text-align: center;
+            padding: 4rem 2rem;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .yoga-hero h1 {
+            font-size: clamp(2.5rem, 5vw, 3.5rem);
+            margin-bottom: 1rem;
+        }
+
+        .yoga-hero h1 span {
+            background: linear-gradient(135deg, var(--accent-warm) 0%, var(--accent-gold) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .yoga-hero p {
+            color: var(--fg-secondary);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto 2rem;
+        }
+
+        .yoga-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .yoga-tab {
+            padding: 0.75rem 1.5rem;
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 30px;
+            color: var(--fg-secondary);
+            font-family: inherit;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .yoga-tab.active, .yoga-tab:hover {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: var(--bg-primary);
+        }
+
+        .yoga-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            padding: 0 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .yoga-card {
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .yoga-image {
+            width: 100%;
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+
+        .yoga-image::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 100px;
+            background: linear-gradient(transparent, rgba(10, 15, 13, 0.9));
+        }
+
+        .yoga-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            padding: 0.4rem 0.8rem;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            z-index: 1;
+        }
+
+        .yoga-badge.beginner { background: rgba(0, 212, 170, 0.8); color: var(--bg-primary); }
+        .yoga-badge.intermediate { background: rgba(255, 200, 87, 0.8); color: var(--bg-primary); }
+        .yoga-badge.advanced { background: rgba(255, 107, 53, 0.8); color: white; }
+
+        .yoga-content {
+            padding: 1.5rem;
+        }
+
+        .yoga-content h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .yoga-content h3 span {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--accent);
+            font-weight: 400;
+            margin-top: 0.25rem;
+        }
+
+        .yoga-content p {
+            color: var(--fg-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .yoga-meta {
+            display: flex;
+            gap: 1.5rem;
+            font-size: 0.85rem;
+            color: var(--fg-secondary);
+        }
+
+        .yoga-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            width: 100%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: modalIn 0.3s ease;
+        }
+
+        @keyframes modalIn {
+            from { opacity: 0; transform: scale(0.95) translateY(20px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-header h2 {
+            font-size: 1.5rem;
+        }
+
+        .modal-close {
+            background: transparent;
+            border: none;
+            color: var(--fg-secondary);
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .modal-close:hover {
+            color: var(--fg-primary);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .auth-tabs {
+            display: flex;
+            margin-bottom: 2rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 0.25rem;
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 0.75rem;
+            background: transparent;
+            border: none;
+            border-radius: 10px;
+            color: var(--fg-secondary);
+            font-family: inherit;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .auth-tab.active {
+            background: var(--accent);
+            color: var(--bg-primary);
+        }
+
+        .auth-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .auth-form .form-input {
+            width: 100%;
+        }
+
+        .auth-submit {
+            width: 100%;
+            margin-top: 0.5rem;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 1.5rem 0;
+            color: var(--fg-secondary);
+            font-size: 0.85rem;
+        }
+
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 4rem;
+            padding: 3rem 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 3rem;
+        }
+
+        .footer-brand p {
+            color: var(--fg-secondary);
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            max-width: 300px;
+        }
+
+        .footer-section h4 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--fg-primary);
+        }
+
+        .footer-links {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .footer-link {
+            color: var(--fg-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+            cursor: pointer;
+        }
+
+        .footer-link:hover {
+            color: var(--accent);
+        }
+
+        .footer-bottom {
+            max-width: 1400px;
+            margin: 2rem auto 0;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            color: var(--fg-secondary);
+            font-size: 0.85rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .nutrition-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .hero-text p {
+                margin: 0 auto 2rem;
+            }
+
+            .hero-buttons {
+                justify-content: center;
+            }
+
+            .hero-visual {
+                order: -1;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .nav-actions .btn-ghost {
+                display: none;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .section {
+                padding: 4rem 1.5rem;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .yoga-grid {
+                grid-template-columns: 1fr;
+                padding: 0 1rem;
+            }
+
+            .food-form {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .footer-brand p {
+                margin: 1rem auto 0;
+            }
+        }
+
+        /* Scroll animations */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Reduced motion */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 2rem;
+            color: var(--fg-secondary);
+        }
+
+        .empty-state svg {
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+    </style>
 </head>
 <body>
-  <!-- Navigation Bar -->
-  <nav class="navbar glass">
-    <div class="nav-container">
-      <div class="nav-brand">
-        <div class="logo-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M3 2l2.01 18.23L12 22l6.99-1.77L21 2z"/>
-            <path d="M12 6.5l5.5 2L12 22 6.5 8.5z"/>
-          </svg>
-        </div>
-        <div class="brand-text">
-          <h1>PantryPilot AI</h1>
-          <span>Nutrition & Wellness</span>
-        </div>
-      </div>
-      
-      <div class="nav-links">
-        <a href="index.html" class="nav-link active">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-          </svg>
-          Home
-        </a>
-        <a href="nutrition-tracker.html" class="nav-link">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
-          </svg>
-          Nutrition Tracker
-        </a>
-        <a href="yoga-exercises.html" class="nav-link">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
-          </svg>
-          Yoga & Exercise
-        </a>
-      </div>
-
-      <div class="nav-actions">
-        <button class="btn-icon" id="themeToggle" aria-label="Toggle theme">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="5"></circle>
-            <line x1="12" y1="1" x2="12" y2="3"></line>
-            <line x1="12" y1="21" x2="12" y2="23"></line>
-            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-            <line x1="1" y1="12" x2="3" y2="12"></line>
-            <line x1="21" y1="12" x2="23" y2="12"></line>
-            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-          </svg>
-        </button>
-        <button class="btn-primary" id="loginBtn">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-            <circle cx="12" cy="7" r="4"></circle>
-          </svg>
-          Login
-        </button>
-      </div>
-
-      <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle menu">
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
+    <!-- Animated Background -->
+    <div class="bg-animated">
+        <div class="floating-orb orb-1"></div>
+        <div class="floating-orb orb-2"></div>
+        <div class="floating-orb orb-3"></div>
     </div>
-  </nav>
 
-  <!-- Login Modal -->
-  <div class="modal" id="loginModal">
-    <div class="modal-overlay" id="modalOverlay"></div>
-    <div class="modal-content glass">
-      <button class="modal-close" id="modalClose">&times;</button>
-      <div class="modal-header">
-        <h2>Welcome Back</h2>
-        <p>Login to access your personalized nutrition tracking</p>
-      </div>
-      <form id="loginForm" class="auth-form">
-        <div class="form-group">
-          <label for="loginEmail">Email Address</label>
-          <input type="email" id="loginEmail" placeholder="you@example.com" required>
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="#" class="logo" onclick="showPage('home')">
+                <div class="logo-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0a0f0d" stroke-width="2.5">
+                        <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
+                        <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
+                        <line x1="6" y1="1" x2="6" y2="4"></line>
+                        <line x1="10" y1="1" x2="10" y2="4"></line>
+                        <line x1="14" y1="1" x2="14" y2="4"></line>
+                    </svg>
+                </div>
+                FitLife India
+            </a>
+
+            <div class="nav-links">
+                <span class="nav-link active" data-page="home" onclick="showPage('home')">Home</span>
+                <span class="nav-link" data-page="nutrition" onclick="showPage('nutrition')">Nutrition</span>
+                <span class="nav-link" data-page="yoga" onclick="showPage('yoga')">Yoga & Exercise</span>
+                <span class="nav-link" data-page="about" onclick="showPage('about')">About</span>
+            </div>
+
+            <div class="nav-actions">
+                <button class="btn btn-ghost" id="loginBtn" onclick="openAuthModal()">Sign In</button>
+                <button class="btn btn-primary" id="userBtn" style="display: none;" onclick="logout()">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    <span id="userName"></span>
+                </button>
+                <button class="btn btn-primary" id="getStartedBtn" onclick="openAuthModal()">Get Started</button>
+                <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
         </div>
-        <div class="form-group">
-          <label for="loginPassword">Password</label>
-          <input type="password" id="loginPassword" placeholder="Enter your password" required>
-        </div>
-        <button type="submit" class="btn-primary btn-full">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
-            <polyline points="10 17 15 12 10 7"></polyline>
-            <line x1="15" y1="12" x2="3" y2="12"></line>
-          </svg>
-          Sign In
-        </button>
-      </form>
-      <div class="auth-divider">
-        <span>or</span>
-      </div>
-      <div class="auth-footer">
-        <p>Don't have an account? <a href="#" id="showSignup">Sign up</a></p>
-      </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <span class="mobile-nav-link" onclick="showPage('home'); toggleMobileMenu();">Home</span>
+        <span class="mobile-nav-link" onclick="showPage('nutrition'); toggleMobileMenu();">Nutrition</span>
+        <span class="mobile-nav-link" onclick="showPage('yoga'); toggleMobileMenu();">Yoga & Exercise</span>
+        <span class="mobile-nav-link" onclick="showPage('about'); toggleMobileMenu();">About</span>
+        <button class="btn btn-primary" onclick="openAuthModal(); toggleMobileMenu();">Get Started</button>
     </div>
-  </div>
 
-  <!-- Signup Modal -->
-  <div class="modal" id="signupModal">
-    <div class="modal-overlay" id="signupOverlay"></div>
-    <div class="modal-content glass">
-      <button class="modal-close" id="signupClose">&times;</button>
-      <div class="modal-header">
-        <h2>Create Account</h2>
-        <p>Start your wellness journey today</p>
-      </div>
-      <form id="signupForm" class="auth-form">
-        <div class="form-group">
-          <label for="signupName">Full Name</label>
-          <input type="text" id="signupName" placeholder="John Doe" required>
-        </div>
-        <div class="form-group">
-          <label for="signupEmail">Email Address</label>
-          <input type="email" id="signupEmail" placeholder="you@example.com" required>
-        </div>
-        <div class="form-group">
-          <label for="signupPassword">Password</label>
-          <input type="password" id="signupPassword" placeholder="Create a password" required>
-        </div>
-        <button type="submit" class="btn-primary btn-full">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-            <circle cx="8.5" cy="7" r="4"></circle>
-            <line x1="20" y1="8" x2="20" y2="14"></line>
-            <line x1="23" y1="11" x2="17" y2="11"></line>
-          </svg>
-          Create Account
-        </button>
-      </form>
-      <div class="auth-divider">
-        <span>or</span>
-      </div>
-      <div class="auth-footer">
-        <p>Already have an account? <a href="#" id="showLogin">Login</a></p>
-      </div>
+    <!-- Home Page -->
+    <div class="page active" id="homePage">
+        <section class="hero">
+            <div class="hero-content">
+                <div class="hero-text reveal">
+                    <h1>Transform Your Life with <span>Ancient Indian Wellness</span></h1>
+                    <p>Discover the perfect blend of traditional yoga practices and modern nutrition science. Track your daily intake, practice authentic exercises, and achieve your health goals.</p>
+                    <div class="hero-buttons">
+                        <button class="btn btn-primary" onclick="showPage('nutrition')">Track Nutrition</button>
+                        <button class="btn btn-warm" onclick="showPage('yoga')">Explore Yoga</button>
+                    </div>
+                </div>
+                <div class="hero-visual reveal">
+                    <div class="hero-card-container">
+                        <div class="glass-card hero-card">
+                            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                                <div style="width: 48px; height: 48px; background: linear-gradient(135deg, var(--accent), var(--accent-gold)); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0a0f0d" stroke-width="2">
+                                        <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h4 style="font-size: 1rem; font-weight: 600;">Daily Progress</h4>
+                                    <span style="font-size: 0.85rem; color: var(--fg-secondary);">You're doing great!</span>
+                                </div>
+                            </div>
+                            <div class="stats-grid">
+                                <div class="stat-item">
+                                    <div class="stat-value" id="homeCalories">0</div>
+                                    <div class="stat-label">Calories</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-value" style="color: var(--accent-warm);" id="homeProtein">0g</div>
+                                    <div class="stat-label">Protein</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-value" style="color: var(--accent-gold);" id="homeCarbs">0g</div>
+                                    <div class="stat-label">Carbs</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-value" id="homeFats">0g</div>
+                                    <div class="stat-label">Fats</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="section-header reveal">
+                <h2>Why Choose FitLife India?</h2>
+                <p>Experience a holistic approach to wellness combining ancient wisdom with modern tracking technology</p>
+            </div>
+            <div class="features-grid">
+                <div class="glass-card feature-card reveal">
+                    <div class="feature-icon">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
+                            <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
+                        </svg>
+                    </div>
+                    <h3>Smart Nutrition Tracking</h3>
+                    <p>Log your daily meals with detailed macro and micronutrient breakdown. Set goals and track your progress over time.</p>
+                </div>
+                <div class="glass-card feature-card reveal">
+                    <div class="feature-icon" style="color: var(--accent-warm);">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <path d="M12 6v6l4 2"></path>
+                        </svg>
+                    </div>
+                    <h3>Authentic Indian Yoga</h3>
+                    <p>Access a comprehensive library of traditional Indian yoga poses and exercises for all skill levels.</p>
+                </div>
+                <div class="glass-card feature-card reveal">
+                    <div class="feature-icon" style="color: var(--accent-gold);">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 20V10"></path>
+                            <path d="M18 20V4"></path>
+                            <path d="M6 20v-4"></path>
+                        </svg>
+                    </div>
+                    <h3>Progress Analytics</h3>
+                    <p>Visualize your health journey with detailed charts and historical data. Stay motivated with daily insights.</p>
+                </div>
+            </div>
+        </section>
+
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <a href="#" class="logo" onclick="showPage('home')">
+                        <div class="logo-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0a0f0d" stroke-width="2.5">
+                                <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
+                                <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
+                            </svg>
+                        </div>
+                        FitLife India
+                    </a>
+                    <p>Empowering millions to achieve their health goals through traditional Indian wellness practices and modern nutrition science.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Features</h4>
+                    <div class="footer-links">
+                        <span class="footer-link" onclick="showPage('nutrition')">Nutrition Tracker</span>
+                        <span class="footer-link" onclick="showPage('yoga')">Yoga Library</span>
+                        <span class="footer-link">Progress Reports</span>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h4>Company</h4>
+                    <div class="footer-links">
+                        <span class="footer-link" onclick="showPage('about')">About Us</span>
+                        <span class="footer-link">Careers</span>
+                        <span class="footer-link">Contact</span>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h4>Legal</h4>
+                    <div class="footer-links">
+                        <span class="footer-link">Privacy Policy</span>
+                        <span class="footer-link">Terms of Service</span>
+                        <span class="footer-link">Cookie Policy</span>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>2025 FitLife India. All rights reserved. Built with passion for wellness.</p>
+            </div>
+        </footer>
     </div>
-  </div>
 
-  <!-- User Profile (shown when logged in) -->
-  <div class="user-profile" id="userProfile" style="display: none;">
-    <div class="profile-avatar" id="profileAvatar">
-      <span id="userInitials">AB</span>
+    <!-- Nutrition Page -->
+    <div class="page" id="nutritionPage">
+        <div class="nutrition-container">
+            <div class="nutrition-header reveal">
+                <h1>Nutrition Tracker</h1>
+                <p>Track your daily food intake and monitor your nutritional goals</p>
+            </div>
+            <div class="nutrition-grid">
+                <div class="nutrition-sidebar">
+                    <div class="glass-card calorie-card reveal">
+                        <h3 style="margin-bottom: 0.5rem; font-size: 1rem; color: var(--fg-secondary);">Daily Calories</h3>
+                        <div class="calorie-ring">
+                            <svg width="180" height="180" viewBox="0 0 180 180">
+                                <defs>
+                                    <linearGradient id="calorieGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                        <stop offset="0%" style="stop-color: #00d4aa"/>
+                                        <stop offset="100%" style="stop-color: #ffc857"/>
+                                    </linearGradient>
+                                </defs>
+                                <circle class="calorie-ring-bg" cx="90" cy="90" r="80"/>
+                                <circle class="calorie-ring-progress" id="calorieRing" cx="90" cy="90" r="80"/>
+                            </svg>
+                            <div class="calorie-value">
+                                <div class="number" id="calorieNumber">0</div>
+                                <div class="unit">/ 2000 kcal</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="glass-card macro-card reveal">
+                        <h3 style="margin-bottom: 1rem; font-size: 1rem;">Macronutrients</h3>
+                        <div class="macro-item">
+                            <div class="macro-header">
+                                <span>Protein</span>
+                                <span id="proteinValue">0g / 150g</span>
+                            </div>
+                            <div class="macro-bar">
+                                <div class="macro-fill protein" id="proteinBar" style="width: 0%;"></div>
+                            </div>
+                        </div>
+                        <div class="macro-item">
+                            <div class="macro-header">
+                                <span>Carbohydrates</span>
+                                <span id="carbsValue">0g / 250g</span>
+                            </div>
+                            <div class="macro-bar">
+                                <div class="macro-fill carbs" id="carbsBar" style="width: 0%;"></div>
+                            </div>
+                        </div>
+                        <div class="macro-item">
+                            <div class="macro-header">
+                                <span>Fats</span>
+                                <span id="fatsValue">0g / 65g</span>
+                            </div>
+                            <div class="macro-bar">
+                                <div class="macro-fill fats" id="fatsBar" style="width: 0%;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="glass-card macro-card reveal">
+                        <h3 style="margin-bottom: 1rem; font-size: 1rem;">Micronutrients</h3>
+                        <div class="macro-item">
+                            <div class="macro-header">
+                                <span>Fiber</span>
+                                <span id="fiberValue">0g / 30g</span>
+                            </div>
+                            <div class="macro-bar">
+                                <div class="macro-fill" style="width: 0%; background: linear-gradient(90deg, #4ade80, #22c55e);" id="fiberBar"></div>
+                            </div>
+                        </div>
+                        <div class="macro-item">
+                            <div class="macro-header">
+                                <span>Sugar</span>
+                                <span id="sugarValue">0g / 50g</span>
+                            </div>
+                            <div class="macro-bar">
+                                <div class="macro-fill" style="width: 0%; background: linear-gradient(90deg, #f472b6, #ec4899);" id="sugarBar"></div>
+                            </div>
+                        </div>
+                        <div class="macro-item">
+                            <div class="macro-header">
+                                <span>Sodium</span>
+                                <span id="sodiumValue">0mg / 2300mg</span>
+                            </div>
+                            <div class="macro-bar">
+                                <div class="macro-fill" style="width: 0%; background: linear-gradient(90deg, #60a5fa, #3b82f6);" id="sodiumBar"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="food-log-section">
+                    <div class="glass-card add-food-card reveal">
+                        <h3>Add Food Entry</h3>
+                        <form id="foodForm" class="food-form">
+                            <div class="form-group full-width">
+                                <label for="foodName">Food Name</label>
+                                <input type="text" id="foodName" class="form-input" placeholder="e.g., Dal Tadka, Roti, Sabzi" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="foodCalories">Calories (kcal)</label>
+                                <input type="number" id="foodCalories" class="form-input" placeholder="0" min="0" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="foodProtein">Protein (g)</label>
+                                <input type="number" id="foodProtein" class="form-input" placeholder="0" min="0" step="0.1">
+                            </div>
+                            <div class="form-group">
+                                <label for="foodCarbs">Carbs (g)</label>
+                                <input type="number" id="foodCarbs" class="form-input" placeholder="0" min="0" step="0.1">
+                            </div>
+                            <div class="form-group">
+                                <label for="foodFats">Fats (g)</label>
+                                <input type="number" id="foodFats" class="form-input" placeholder="0" min="0" step="0.1">
+                            </div>
+                            <div class="form-group">
+                                <label for="foodFiber">Fiber (g)</label>
+                                <input type="number" id="foodFiber" class="form-input" placeholder="0" min="0" step="0.1">
+                            </div>
+                            <div class="form-group">
+                                <label for="foodSugar">Sugar (g)</label>
+                                <input type="number" id="foodSugar" class="form-input" placeholder="0" min="0" step="0.1">
+                            </div>
+                            <div class="form-group">
+                                <label for="foodSodium">Sodium (mg)</label>
+                                <input type="number" id="foodSodium" class="form-input" placeholder="0" min="0">
+                            </div>
+                            <div class="form-group full-width">
+                                <button type="submit" class="btn btn-primary auth-submit">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    </svg>
+                                    Add Food
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="glass-card food-log-card reveal">
+                        <div class="food-log-header">
+                            <h3>Today's Food Log</h3>
+                            <span style="font-size: 0.85rem; color: var(--fg-secondary);" id="todayDate"></span>
+                        </div>
+                        <div class="food-list" id="foodList">
+                            <div class="empty-state" id="emptyFoodState">
+                                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
+                                    <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
+                                </svg>
+                                <p>No foods logged today. Start tracking your nutrition!</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="glass-card history-card reveal">
+                        <h3>Nutrition History</h3>
+                        <div class="history-list" id="historyList">
+                            <div class="empty-state" id="emptyHistoryState">
+                                <p>No history yet. Keep tracking to see your progress!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="profile-dropdown glass">
-      <div class="profile-info">
-        <h4 id="userName">User Name</h4>
-        <p id="userEmail">user@example.com</p>
-      </div>
-      <div class="profile-divider"></div>
-      <button class="profile-btn" id="logoutBtn">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-          <polyline points="16 17 21 12 16 7"></polyline>
-          <line x1="21" y1="12" x2="9" y2="12"></line>
-        </svg>
-        Logout
-      </button>
+
+    <!-- Yoga Page -->
+    <div class="page" id="yogaPage">
+        <div class="yoga-hero reveal">
+            <h1>Discover <span>Indian Yoga & Exercise</span></h1>
+            <p>Explore traditional Indian yoga poses, pranayama breathing techniques, and exercises designed for holistic wellness</p>
+        </div>
+
+        <div class="yoga-tabs reveal">
+            <button class="yoga-tab active" data-category="all">All</button>
+            <button class="yoga-tab" data-category="yoga">Yoga Asanas</button>
+            <button class="yoga-tab" data-category="pranayama">Pranayama</button>
+            <button class="yoga-tab" data-category="exercise">Indian Exercises</button>
+        </div>
+
+        <div class="yoga-grid" id="yogaGrid"></div>
     </div>
-  </div>
 
-  <!-- Hero Section -->
-  <section class="hero">
-    <div class="container">
-      <div class="hero-content">
-        <div class="hero-left">
-          <div class="hero-badge glass">
-            <span class="pulse-dot"></span>
-            AI-Powered Nutrition Platform
-          </div>
-          <h1 class="hero-title">
-            Transform Your
-            <span class="gradient-text">Pantry</span>
-            Into Healthy Meals
-          </h1>
-          <p class="hero-subtitle">
-            Smart recipe generation with personalized nutrition tracking, calorie management, 
-            and traditional Indian yoga exercises - all in one comprehensive wellness platform.
-          </p>
-          <div class="hero-actions">
-            <button class="btn-primary btn-large" id="getStartedBtn">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="10"></circle>
-                <polyline points="12 6 12 12 16 14"></polyline>
-              </svg>
-              Get Started
-            </button>
-            <button class="btn-secondary btn-large" onclick="document.getElementById('recipegen').scrollIntoView({behavior:'smooth'})">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="6 9 12 15 18 9"></polyline>
-              </svg>
-              Explore Features
-            </button>
-          </div>
-          <div class="hero-stats">
-            <div class="stat-item">
-              <h3>10K+</h3>
-              <p>Active Users</p>
+    <!-- About Page -->
+    <div class="page" id="aboutPage">
+        <section class="section" style="padding-top: 6rem;">
+            <div class="section-header reveal">
+                <h2>About FitLife India</h2>
+                <p>Bringing ancient Indian wellness wisdom to the modern world</p>
             </div>
-            <div class="stat-item">
-              <h3>50K+</h3>
-              <p>Recipes Generated</p>
+            <div style="max-width: 800px; margin: 0 auto;">
+                <div class="glass-card" style="padding: 2.5rem; margin-bottom: 2rem;" class="reveal">
+                    <h3 style="font-size: 1.5rem; margin-bottom: 1rem; color: var(--accent);">Our Mission</h3>
+                    <p style="color: var(--fg-secondary); line-height: 1.8;">
+                        FitLife India is dedicated to making traditional Indian wellness practices accessible to everyone. We combine centuries-old wisdom of yoga, ayurveda, and Indian dietary practices with modern nutrition science and technology to help you achieve optimal health.
+                    </p>
+                </div>
+                <div class="glass-card" style="padding: 2.5rem; margin-bottom: 2rem;" class="reveal">
+                    <h3 style="font-size: 1.5rem; margin-bottom: 1rem; color: var(--accent-warm);">Why Indian Wellness?</h3>
+                    <p style="color: var(--fg-secondary); line-height: 1.8;">
+                        Indian wellness practices have been refined over thousands of years. From the therapeutic poses of Hatha Yoga to the breathing techniques of Pranayama, from the balanced nutrition of traditional Indian cuisine to the holistic approach of Ayurveda - these time-tested methods offer comprehensive solutions for modern health challenges.
+                    </p>
+                </div>
+                <div class="glass-card" style="padding: 2.5rem;" class="reveal">
+                    <h3 style="font-size: 1.5rem; margin-bottom: 1rem; color: var(--accent-gold);">Our Features</h3>
+                    <ul style="color: var(--fg-secondary); line-height: 2; list-style: none; padding: 0;">
+                        <li style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            Comprehensive nutrition tracking with macro and micronutrients
+                        </li>
+                        <li style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            Extensive library of Indian yoga asanas with instructions
+                        </li>
+                        <li style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            Pranayama breathing exercises for stress relief
+                        </li>
+                        <li style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            Daily progress tracking and historical data
+                        </li>
+                        <li style="display: flex; align-items: center; gap: 0.75rem;">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            Traditional Indian exercises for strength and flexibility
+                        </li>
+                    </ul>
+                </div>
             </div>
-            <div class="stat-item">
-              <h3>100+</h3>
-              <p>Yoga Routines</p>
-            </div>
-          </div>
-        </div>
-        <div class="hero-right">
-          <div class="hero-card glass">
-            <div class="card-glow"></div>
-            <img src="data:image/svg+xml,%3Csvg width='400' height='400' viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3ClinearGradient id='grad1' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%238b5cf6;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%2306b6d4;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='400' height='400' fill='url(%23grad1)' opacity='0.1'/%3E%3Ccircle cx='200' cy='150' r='80' fill='%238b5cf6' opacity='0.3'/%3E%3Ccircle cx='200' cy='250' r='60' fill='%2310b981' opacity='0.3'/%3E%3Cpath d='M200,50 L250,100 L200,150 L150,100 Z' fill='%2306b6d4' opacity='0.3'/%3E%3Ctext x='50%25' y='50%25' font-family='Arial' font-size='48' fill='%238b5cf6' text-anchor='middle' opacity='0.8'%3E🥗%3C/text%3E%3C/svg%3E" alt="Nutrition Illustration">
-          </div>
-        </div>
-      </div>
+        </section>
     </div>
-  </section>
 
-  <!-- Features Section -->
-  <section class="features">
-    <div class="container">
-      <div class="section-header">
-        <h2 class="section-title">Comprehensive Wellness Features</h2>
-        <p class="section-subtitle">Everything you need for a healthier lifestyle</p>
-      </div>
-      <div class="features-grid">
-        <div class="feature-card glass">
-          <div class="feature-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
-              <path d="M2 17l10 5 10-5M2 12l10 5 10-5"></path>
-            </svg>
-          </div>
-          <h3>Smart Recipe AI</h3>
-          <p>Generate personalized recipes based on your available ingredients with AI-powered suggestions</p>
+    <!-- Auth Modal -->
+    <div class="modal-overlay" id="authModal">
+        <div class="modal glass-strong">
+            <div class="modal-header">
+                <h2>Welcome</h2>
+                <button class="modal-close" onclick="closeAuthModal()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="auth-tabs">
+                    <button class="auth-tab active" data-auth="login" onclick="switchAuthTab('login')">Sign In</button>
+                    <button class="auth-tab" data-auth="signup" onclick="switchAuthTab('signup')">Sign Up</button>
+                </div>
+                <form class="auth-form" id="authForm">
+                    <div class="form-group" id="nameGroup" style="display: none;">
+                        <label for="userName">Full Name</label>
+                        <input type="text" id="authName" class="form-input" placeholder="Enter your name">
+                    </div>
+                    <div class="form-group">
+                        <label for="authEmail">Email Address</label>
+                        <input type="email" id="authEmail" class="form-input" placeholder="you@example.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="authPassword">Password</label>
+                        <input type="password" id="authPassword" class="form-input" placeholder="Enter your password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary auth-submit">
+                        Continue
+                    </button>
+                </form>
+                <div class="divider">or continue with</div>
+                <button class="btn btn-ghost" style="width: 100%; border: 1px solid rgba(255,255,255,0.1);" onclick="guestLogin()">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    Continue as Guest
+                </button>
+            </div>
         </div>
-        <div class="feature-card glass">
-          <div class="feature-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <line x1="12" y1="1" x2="12" y2="23"></line>
-              <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
-            </svg>
-          </div>
-          <h3>Nutrition Tracking</h3>
-          <p>Track daily calories, macronutrients, and micronutrients with detailed analytics and insights</p>
-        </div>
-        <div class="feature-card glass">
-          <div class="feature-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
-            </svg>
-          </div>
-          <h3>Yoga & Exercise</h3>
-          <p>Traditional Indian yoga asanas and exercises with detailed instructions and benefits</p>
-        </div>
-        <div class="feature-card glass">
-          <div class="feature-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-              <line x1="9" y1="9" x2="15" y2="15"></line>
-              <line x1="15" y1="9" x2="9" y2="15"></line>
-            </svg>
-          </div>
-          <h3>Diet Planning</h3>
-          <p>Customize meal plans for vegetarian, vegan, gluten-free, and other dietary preferences</p>
-        </div>
-        <div class="feature-card glass">
-          <div class="feature-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
-            </svg>
-          </div>
-          <h3>Health Analytics</h3>
-          <p>Visualize your nutrition journey with charts, trends, and personalized recommendations</p>
-        </div>
-        <div class="feature-card glass">
-          <div class="feature-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-              <circle cx="9" cy="7" r="4"></circle>
-              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-            </svg>
-          </div>
-          <h3>Multi-User Support</h3>
-          <p>Separate profiles for family members with individual tracking and preferences</p>
-        </div>
-      </div>
     </div>
-  </section>
 
-  <!-- Recipe Generator Section -->
-  <section class="recipe-generator" id="recipegen">
-    <div class="container">
-      <div class="section-header">
-        <h2 class="section-title">AI Recipe Generator</h2>
-        <p class="section-subtitle">Turn your pantry items into delicious meals</p>
-      </div>
+    <script>
+        // ==================== DATA ====================
+        const yogaExercises = [
+            {
+                id: 1,
+                name: "Surya Namaskar",
+                sanskrit: "Sun Salutation",
+                category: "yoga",
+                difficulty: "beginner",
+                duration: "15-20 min",
+                calories: "150-200",
+                description: "A flowing sequence of 12 poses that warms up the entire body, improves flexibility, and energizes the mind.",
+                benefits: ["Full body workout", "Improves flexibility", "Boosts metabolism"],
+                instructions: [
+                    "Stand at the front of your mat with feet together",
+                    "Inhale, raise arms overhead",
+                    "Exhale, fold forward to Uttanasana",
+                    "Inhale, step right foot back for Anjaneyasana",
+                    "Exhale, step left foot back to Plank",
+                    "Lower through Chaturanga",
+                    "Inhale to Upward Dog",
+                    "Exhale to Downward Dog",
+                    "Step right foot forward, repeat on left side"
+                ]
+            },
+            {
+                id: 2,
+                name: "Padmasana",
+                sanskrit: "Lotus Pose",
+                category: "yoga",
+                difficulty: "intermediate",
+                duration: "5-15 min",
+                calories: "20-30",
+                description: "A seated meditation pose that promotes calmness, opens the hips, and improves posture.",
+                benefits: ["Calms the mind", "Opens hips", "Improves posture"],
+                instructions: [
+                    "Sit with legs extended",
+                    "Bend right knee, place foot on left thigh",
+                    "Bend left knee, place foot on right thigh",
+                    "Keep spine straight and hands on knees",
+                    "Breathe deeply and hold"
+                ]
+            },
+            {
+                id: 3,
+                name: "Bhujangasana",
+                sanskrit: "Cobra Pose",
+                category: "yoga",
+                difficulty: "beginner",
+                duration: "1-3 min",
+                calories: "30-40",
+                description: "A gentle backbend that strengthens the spine, opens the chest, and relieves stress.",
+                benefits: ["Strengthens back", "Opens chest", "Relieves stress"],
+                instructions: [
+                    "Lie face down on the mat",
+                    "Place hands under shoulders",
+                    "Inhale, lift chest off the ground",
+                    "Keep elbows slightly bent",
+                    "Hold for 15-30 seconds"
+                ]
+            },
+            {
+                id: 4,
+                name: "Anulom Vilom",
+                sanskrit: "Alternate Nostril Breathing",
+                category: "pranayama",
+                difficulty: "beginner",
+                duration: "10-15 min",
+                calories: "10-15",
+                description: "A balancing breathing technique that purifies the nadis and calms the nervous system.",
+                benefits: ["Balances energy", "Reduces anxiety", "Improves focus"],
+                instructions: [
+                    "Sit in a comfortable position",
+                    "Close right nostril with thumb",
+                    "Inhale through left nostril",
+                    "Close left nostril, exhale through right",
+                    "Inhale through right, close, exhale left",
+                    "Continue for 5-10 minutes"
+                ]
+            },
+            {
+                id: 5,
+                name: "Kapalbhati",
+                sanskrit: "Skull Shining Breath",
+                category: "pranayama",
+                difficulty: "intermediate",
+                duration: "5-10 min",
+                calories: "50-70",
+                description: "An energizing breathing technique that cleanses the respiratory system and boosts metabolism.",
+                benefits: ["Detoxifies lungs", "Boosts energy", "Improves digestion"],
+                instructions: [
+                    "Sit with spine straight",
+                    "Take a deep breath in",
+                    "Forcefully exhale through nose",
+                    "Let inhalation happen naturally",
+                    "Start with 20 breaths, increase gradually"
+                ]
+            },
+            {
+                id: 6,
+                name: "Dandasana",
+                sanskrit: "Staff Pose",
+                category: "yoga",
+                difficulty: "beginner",
+                duration: "1-2 min",
+                calories: "15-20",
+                description: "A foundational seated pose that improves posture and strengthens the core and back muscles.",
+                benefits: ["Improves posture", "Strengthens core", "Stretches hamstrings"],
+                instructions: [
+                    "Sit with legs extended forward",
+                    "Flex feet, press through heels",
+                    "Place hands beside hips",
+                    "Lengthen spine, engage core",
+                    "Hold for 30-60 seconds"
+                ]
+            },
+            {
+                id: 7,
+                name: "Dand Baithak",
+                sanskrit: "Indian Squats",
+                category: "exercise",
+                difficulty: "intermediate",
+                duration: "10-15 min",
+                calories: "100-150",
+                description: "Traditional Indian squats that build leg strength, improve flexibility, and enhance cardiovascular fitness.",
+                benefits: ["Builds leg strength", "Improves flexibility", "Cardiovascular health"],
+                instructions: [
+                    "Stand with feet shoulder-width apart",
+                    "Lower into a deep squat",
+                    "Keep heels flat on ground",
+                    "Stand back up with control",
+                    "Repeat for 20-50 repetitions"
+                ]
+            },
+            {
+                id: 8,
+                name: "Surya Bhedana",
+                sanskrit: "Right Nostril Breathing",
+                category: "pranayama",
+                difficulty: "beginner",
+                duration: "5-10 min",
+                calories: "10-15",
+                description: "A warming breathing technique that activates the sympathetic nervous system and increases energy.",
+                benefits: ["Increases energy", "Warms the body", "Improves digestion"],
+                instructions: [
+                    "Sit comfortably with spine straight",
+                    "Close left nostril with ring finger",
+                    "Inhale slowly through right nostril",
+                    "Close right nostril, hold briefly",
+                    "Exhale through left nostril",
+                    "Repeat for 5-10 minutes"
+                ]
+            },
+            {
+                id: 9,
+                name: "Vrikshasana",
+                sanskrit: "Tree Pose",
+                category: "yoga",
+                difficulty: "beginner",
+                duration: "1-3 min",
+                calories: "20-30",
+                description: "A balancing pose that improves concentration, strengthens legs, and opens the hips.",
+                benefits: ["Improves balance", "Strengthens legs", "Enhances focus"],
+                instructions: [
+                    "Stand on one leg",
+                    "Place other foot on inner thigh",
+                    "Bring hands to prayer position",
+                    "Focus on a fixed point",
+                    "Hold for 30-60 seconds each side"
+                ]
+            },
+            {
+                id: 10,
+                name: "Bethak",
+                sanskrit: "Indian Push-ups",
+                category: "exercise",
+                difficulty: "advanced",
+                duration: "10-15 min",
+                calories: "120-180",
+                description: "Traditional Indian push-ups that build upper body strength, core stability, and shoulder mobility.",
+                benefits: ["Upper body strength", "Core stability", "Shoulder mobility"],
+                instructions: [
+                    "Start in a crouch position",
+                    "Lower body to ground in an arc",
+                    "Push up to crouch position",
+                    "Keep core engaged throughout",
+                    "Start with 10, build up to 50+"
+                ]
+            },
+            {
+                id: 11,
+                name: "Trikonasana",
+                sanskrit: "Triangle Pose",
+                category: "yoga",
+                difficulty: "intermediate",
+                duration: "1-2 min",
+                calories: "25-35",
+                description: "A standing pose that stretches the sides, strengthens legs, and improves balance.",
+                benefits: ["Stretches sides", "Strengthens legs", "Improves balance"],
+                instructions: [
+                    "Stand with feet wide apart",
+                    "Turn right foot out 90 degrees",
+                    "Extend arms to sides",
+                    "Reach right hand to right ankle",
+                    "Look up at left hand, hold"
+                ]
+            },
+            {
+                id: 12,
+                name: "Agnisar Kriya",
+                sanskrit: "Fire Essence Technique",
+                category: "pranayama",
+                difficulty: "advanced",
+                duration: "5 min",
+                calories: "30-40",
+                description: "An advanced technique that strengthens the digestive fire and massages internal organs.",
+                benefits: ["Improves digestion", "Strengthens core", "Massages organs"],
+                instructions: [
+                    "Stand with feet hip-width apart",
+                    "Exhale completely and hold",
+                    "Pump abdomen in and out rapidly",
+                    "Continue until you need to inhale",
+                    "Practice on empty stomach only"
+                ]
+            }
+        ];
 
-      <div class="generator-content">
-        <div class="generator-form glass">
-          <div class="form-group">
-            <label>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                <circle cx="12" cy="10" r="3"></circle>
-              </svg>
-              Available Ingredients
-            </label>
-            <textarea id="ingredients" placeholder="rice, tomato, onion, paneer, spinach, garlic, cumin..."></textarea>
-          </div>
+        // ==================== STATE ====================
+        let currentUser = null;
+        let todayFoods = [];
+        let nutritionHistory = [];
+        let currentAuthMode = 'login';
 
-          <div class="form-row">
-            <div class="form-group">
-              <label>Diet Preference</label>
-              <select id="diet">
-                <option value="none">No restriction</option>
-                <option value="vegetarian">Vegetarian</option>
-                <option value="vegan">Vegan</option>
-                <option value="glutenfree">Gluten-free</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label>Cuisine</label>
-              <select id="cuisine">
-                <option value="auto">Auto-detect</option>
-                <option value="indian">Indian</option>
-                <option value="italian">Italian</option>
-                <option value="chinese">Chinese</option>
-                <option value="mediterranean">Mediterranean</option>
-                <option value="mexican">Mexican</option>
-                <option value="thai">Thai</option>
-              </select>
-            </div>
-          </div>
+        // ==================== INITIALIZATION ====================
+        document.addEventListener('DOMContentLoaded', () => {
+            initApp();
+            setupEventListeners();
+            setupScrollAnimations();
+            renderYogaGrid();
+        });
 
-          <div class="form-row">
-            <div class="form-group">
-              <label>Cooking Time (min)</label>
-              <input type="number" id="time" value="25" min="5" max="180">
-            </div>
-            <div class="form-group">
-              <label>Servings</label>
-              <input type="number" id="servings" value="2" min="1" max="10">
-            </div>
-            <div class="form-group">
-              <label>Target Calories</label>
-              <input type="number" id="calGoal" value="450" min="150" max="1200">
-            </div>
-          </div>
+        function initApp() {
+            // Load user from localStorage
+            const savedUser = localStorage.getItem('fitlife_user');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                updateUserUI();
+            }
 
-          <div class="form-group">
-            <label>Spice Level</label>
-            <div class="toggle-group">
-              <button type="button" class="toggle-btn" data-value="mild">🌿 Mild</button>
-              <button type="button" class="toggle-btn active" data-value="medium">🌶️ Medium</button>
-              <button type="button" class="toggle-btn" data-value="hot">🔥 Hot</button>
-            </div>
-          </div>
+            // Load nutrition data
+            loadNutritionData();
+            updateNutritionDisplay();
+            updateHistoryDisplay();
 
-          <div class="form-actions">
-            <button class="btn-primary" id="generateBtn">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path>
-              </svg>
-              Generate Recipe
-            </button>
-            <button class="btn-secondary" id="randomBtn">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="23 4 23 10 17 10"></polyline>
-                <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
-              </svg>
-              Try Sample
-            </button>
-            <button class="btn-secondary" id="resetBtn">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="1 4 1 10 7 10"></polyline>
-                <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
-              </svg>
-              Reset
-            </button>
-          </div>
-        </div>
+            // Set today's date
+            const today = new Date();
+            document.getElementById('todayDate').textContent = today.toLocaleDateString('en-IN', { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+        }
 
-        <div class="recipe-output" id="recipeOutput">
-          <div class="placeholder glass">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
-              <path d="M2 17l10 5 10-5M2 12l10 5 10-5"></path>
-            </svg>
-            <h3>Recipe Ready to Generate</h3>
-            <p>Enter your ingredients and preferences, then click "Generate Recipe" to get personalized meal suggestions</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+        function setupEventListeners() {
+            // Navbar scroll
+            window.addEventListener('scroll', () => {
+                const navbar = document.getElementById('navbar');
+                if (window.scrollY > 50) {
+                    navbar.classList.add('scrolled');
+                } else {
+                    navbar.classList.remove('scrolled');
+                }
+            });
 
-  <!-- Footer -->
-  <footer class="footer">
-    <div class="container">
-      <div class="footer-content">
-        <div class="footer-brand">
-          <div class="logo-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M3 2l2.01 18.23L12 22l6.99-1.77L21 2z"/>
-              <path d="M12 6.5l5.5 2L12 22 6.5 8.5z"/>
-            </svg>
-          </div>
-          <div>
-            <h3>PantryPilot AI</h3>
-            <p>Your personal nutrition & wellness companion</p>
-          </div>
-        </div>
-        <div class="footer-links">
-          <div class="footer-column">
-            <h4>Product</h4>
-            <a href="#">Features</a>
-            <a href="#">Pricing</a>
-            <a href="#">FAQ</a>
-          </div>
-          <div class="footer-column">
-            <h4>Company</h4>
-            <a href="#">About</a>
-            <a href="#">Blog</a>
-            <a href="#">Careers</a>
-          </div>
-          <div class="footer-column">
-            <h4>Support</h4>
-            <a href="#">Help Center</a>
-            <a href="#">Contact</a>
-            <a href="#">Privacy</a>
-          </div>
-        </div>
-      </div>
-      <div class="footer-bottom">
-        <p>&copy; 2024 PantryPilot AI. All rights reserved.</p>
-      </div>
-    </div>
-  </footer>
+            // Food form
+            document.getElementById('foodForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                addFoodEntry();
+            });
 
-  <!-- Toast Notification -->
-  <div class="toast" id="toast"></div>
+            // Auth form
+            document.getElementById('authForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                handleAuth();
+            });
 
-  <script src="script.js"></script>
+            // Yoga tabs
+            document.querySelectorAll('.yoga-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    document.querySelectorAll('.yoga-tab').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    filterYoga(tab.dataset.category);
+                });
+            });
+        }
+
+        function setupScrollAnimations() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+        }
+
+        // ==================== NAVIGATION ====================
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+
+            document.getElementById(pageId + 'Page').classList.add('active');
+            document.querySelector(`.nav-link[data-page="${pageId}"]`)?.classList.add('active');
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            // Re-run scroll animations
+            setTimeout(() => {
+                document.querySelectorAll('.reveal').forEach(el => {
+                    el.classList.remove('visible');
+                });
+                setupScrollAnimations();
+            }, 100);
+        }
+
+        function toggleMobileMenu() {
+            document.getElementById('mobileMenu').classList.toggle('active');
+        }
+
+        // ==================== AUTHENTICATION ====================
+        function openAuthModal() {
+            document.getElementById('authModal').classList.add('active');
+        }
+
+        function closeAuthModal() {
+            document.getElementById('authModal').classList.remove('active');
+        }
+
+        function switchAuthTab(mode) {
+            currentAuthMode = mode;
+            document.querySelectorAll('.auth-tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelector(`.auth-tab[data-auth="${mode}"]`).classList.add('active');
+
+            document.getElementById('nameGroup').style.display = mode === 'signup' ? 'flex' : 'none';
+        }
+
+        function handleAuth() {
+            const email = document.getElementById('authEmail').value;
+            const password = document.getElementById('authPassword').value;
+            const name = document.getElementById('authName').value;
+
+            if (!email || !password) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            currentUser = {
+                email: email,
+                name: name || email.split('@')[0],
+                id: Date.now()
+            };
+
+            localStorage.setItem('fitlife_user', JSON.stringify(currentUser));
+            updateUserUI();
+            closeAuthModal();
+            loadNutritionData();
+            updateNutritionDisplay();
+        }
+
+        function guestLogin() {
+            currentUser = {
+                email: 'guest@fitlife.in',
+                name: 'Guest User',
+                id: 'guest_' + Date.now()
+            };
+            localStorage.setItem('fitlife_user', JSON.stringify(currentUser));
+            updateUserUI();
+            closeAuthModal();
+        }
+
+        function logout() {
+            currentUser = null;
+            localStorage.removeItem('fitlife_user');
+            updateUserUI();
+            todayFoods = [];
+            nutritionHistory = [];
+            updateNutritionDisplay();
+            updateHistoryDisplay();
+        }
+
+        function updateUserUI() {
+            const loginBtn = document.getElementById('loginBtn');
+            const getStartedBtn = document.getElementById('getStartedBtn');
+            const userBtn = document.getElementById('userBtn');
+            const userName = document.getElementById('userName');
+
+            if (currentUser) {
+                loginBtn.style.display = 'none';
+                getStartedBtn.style.display = 'none';
+                userBtn.style.display = 'flex';
+                userName.textContent = currentUser.name;
+            } else {
+                loginBtn.style.display = 'block';
+                getStartedBtn.style.display = 'flex';
+                userBtn.style.display = 'none';
+            }
+        }
+
+        // ==================== NUTRITION TRACKING ====================
+        function loadNutritionData() {
+            const today = new Date().toDateString();
+            const key = currentUser ? `nutrition_${currentUser.id}` : 'nutrition_guest';
+            
+            const savedData = localStorage.getItem(key);
+            if (savedData) {
+                const data = JSON.parse(savedData);
+                nutritionHistory = data.history || [];
+                
+                const todayData = data.daily && data.daily[today];
+                todayFoods = todayData ? todayData.foods : [];
+            } else {
+                todayFoods = [];
+                nutritionHistory = [];
+            }
+        }
+
+        function saveNutritionData() {
+            const today = new Date().toDateString();
+            const key = currentUser ? `nutrition_${currentUser.id}` : 'nutrition_guest';
+            
+            const existingData = localStorage.getItem(key);
+            let data = existingData ? JSON.parse(existingData) : { daily: {}, history: [] };
+
+            // Calculate today's totals
+            const totals = calculateDailyTotals();
+            
+            data.daily = data.daily || {};
+            data.daily[today] = {
+                foods: todayFoods,
+                totals: totals
+            };
+
+            // Update history
+            const historyIndex = data.history.findIndex(h => h.date === today);
+            if (historyIndex >= 0) {
+                data.history[historyIndex] = { date: today, ...totals };
+            } else {
+                data.history.unshift({ date: today, ...totals });
+            }
+
+            // Keep only last 30 days of history
+            data.history = data.history.slice(0, 30);
+
+            localStorage.setItem(key, JSON.stringify(data));
+            nutritionHistory = data.history;
+        }
+
+        function calculateDailyTotals() {
+            return todayFoods.reduce((acc, food) => ({
+                calories: acc.calories + (food.calories || 0),
+                protein: acc.protein + (food.protein || 0),
+                carbs: acc.carbs + (food.carbs || 0),
+                fats: acc.fats + (food.fats || 0),
+                fiber: acc.fiber + (food.fiber || 0),
+                sugar: acc.sugar + (food.sugar || 0),
+                sodium: acc.sodium + (food.sodium || 0)
+            }), { calories: 0, protein: 0, carbs: 0, fats: 0, fiber: 0, sugar: 0, sodium: 0 });
+        }
+
+        function addFoodEntry() {
+            const food = {
+                id: Date.now(),
+                name: document.getElementById('foodName').value,
+                calories: parseFloat(document.getElementById('foodCalories').value) || 0,
+                protein: parseFloat(document.getElementById('foodProtein').value) || 0,
+                carbs: parseFloat(document.getElementById('foodCarbs').value) || 0,
+                fats: parseFloat(document.getElementById('foodFats').value) || 0,
+                fiber: parseFloat(document.getElementById('foodFiber').value) || 0,
+                sugar: parseFloat(document.getElementById('foodSugar').value) || 0,
+                sodium: parseFloat(document.getElementById('foodSodium').value) || 0,
+                time: new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })
+            };
+
+            todayFoods.push(food);
+            saveNutritionData();
+            updateNutritionDisplay();
+            updateFoodList();
+            updateHistoryDisplay();
+
+            // Reset form
+            document.getElementById('foodForm').reset();
+        }
+
+        function deleteFood(id) {
+            todayFoods = todayFoods.filter(food => food.id !== id);
+            saveNutritionData();
+            updateNutritionDisplay();
+            updateFoodList();
+            updateHistoryDisplay();
+        }
+
+        function updateNutritionDisplay() {
+            const totals = calculateDailyTotals();
+
+            // Update calorie ring
+            const calorieGoal = 2000;
+            const caloriePercent = Math.min((totals.calories / calorieGoal) * 100, 100);
+            const circumference = 2 * Math.PI * 80;
+            const offset = circumference - (caloriePercent / 100) * circumference;
+
+            const calorieRing = document.getElementById('calorieRing');
+            if (calorieRing) {
+                calorieRing.style.strokeDashoffset = Math.max(0, offset);
+            }
+
+            // Update displays
+            document.getElementById('calorieNumber').textContent = Math.round(totals.calories);
+            document.getElementById('homeCalories').textContent = Math.round(totals.calories);
+            document.getElementById('homeProtein').textContent = Math.round(totals.protein) + 'g';
+            document.getElementById('homeCarbs').textContent = Math.round(totals.carbs) + 'g';
+            document.getElementById('homeFats').textContent = Math.round(totals.fats) + 'g';
+
+            // Update macros
+            updateMacroBar('protein', totals.protein, 150);
+            updateMacroBar('carbs', totals.carbs, 250);
+            updateMacroBar('fats', totals.fats, 65);
+            updateMicroBar('fiber', totals.fiber, 30);
+            updateMicroBar('sugar', totals.sugar, 50);
+            updateMicroBar('sodium', totals.sodium, 2300);
+        }
+
+        function updateMacroBar(macro, current, goal) {
+            const percent = Math.min((current / goal) * 100, 100);
+            document.getElementById(macro + 'Value').textContent = `${Math.round(current)}g / ${goal}g`;
+            document.getElementById(macro + 'Bar').style.width = percent + '%';
+        }
+
+        function updateMicroBar(micro, current, goal) {
+            const percent = Math.min((current / goal) * 100, 100);
+            document.getElementById(micro + 'Value').textContent = 
+                micro === 'sodium' ? `${Math.round(current)}mg / ${goal}mg` : `${Math.round(current)}g / ${goal}g`;
+            document.getElementById(micro + 'Bar').style.width = percent + '%';
+        }
+
+        function updateFoodList() {
+            const foodList = document.getElementById('foodList');
+            const emptyState = document.getElementById('emptyFoodState');
+
+            if (todayFoods.length === 0) {
+                emptyState.style.display = 'block';
+                foodList.innerHTML = '';
+                foodList.appendChild(emptyState);
+                return;
+            }
+
+            emptyState.style.display = 'none';
+            foodList.innerHTML = todayFoods.map(food => `
+                <div class="food-item">
+                    <div class="food-info">
+                        <h4>${food.name}</h4>
+                        <span>Added at ${food.time} | P: ${food.protein}g | C: ${food.carbs}g | F: ${food.fats}g</span>
+                    </div>
+                    <span class="food-calories">${food.calories} kcal</span>
+                    <button class="delete-food" onclick="deleteFood(${food.id})">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                        </svg>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function updateHistoryDisplay() {
+            const historyList = document.getElementById('historyList');
+            const emptyHistoryState = document.getElementById('emptyHistoryState');
+
+            // Filter out today's entry for history display
+            const today = new Date().toDateString();
+            const pastHistory = nutritionHistory.filter(h => h.date !== today);
+
+            if (pastHistory.length === 0) {
+                historyList.innerHTML = '<div class="empty-state"><p>No history yet. Keep tracking to see your progress!</p></div>';
+                return;
+            }
+
+            historyList.innerHTML = pastHistory.slice(0, 7).map(entry => {
+                const date = new Date(entry.date);
+                return `
+                    <div class="history-item">
+                        <div>
+                            <span style="font-weight: 500;">${date.toLocaleDateString('en-IN', { weekday: 'short', month: 'short', day: 'numeric' })}</span>
+                            <span style="color: var(--fg-secondary); font-size: 0.8rem; margin-left: 0.5rem;">P: ${Math.round(entry.protein)}g | C: ${Math.round(entry.carbs)}g | F: ${Math.round(entry.fats)}g</span>
+                        </div>
+                        <span class="history-calories">${Math.round(entry.calories)} kcal</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // ==================== YOGA GRID ====================
+        function renderYogaGrid(category = 'all') {
+            const grid = document.getElementById('yogaGrid');
+            const filtered = category === 'all' ? yogaExercises : yogaExercises.filter(y => y.category === category);
+
+            grid.innerHTML = filtered.map(yoga => `
+                <div class="glass-card yoga-card reveal" onclick="showYogaDetail(${yoga.id})">
+                    <div class="yoga-image" style="background: linear-gradient(135deg, ${getCategoryColor(yoga.category)});">
+                        <span class="yoga-badge ${yoga.difficulty}">${yoga.difficulty}</span>
+                    </div>
+                    <div class="yoga-content">
+                        <h3>${yoga.name}<span>${yoga.sanskrit}</span></h3>
+                        <p>${yoga.description}</p>
+                        <div class="yoga-meta">
+                            <span class="yoga-meta-item">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <polyline points="12 6 12 12 16 14"></polyline>
+                                </svg>
+                                ${yoga.duration}
+                            </span>
+                            <span class="yoga-meta-item">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M12 20V10"></path>
+                                    <path d="M18 20V4"></path>
+                                    <path d="M6 20v-4"></path>
+                                </svg>
+                                ${yoga.calories} kcal
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            // Re-run animations
+            setTimeout(setupScrollAnimations, 100);
+        }
+
+        function filterYoga(category) {
+            renderYogaGrid(category);
+        }
+
+        function getCategoryColor(category) {
+            const colors = {
+                yoga: 'rgba(0, 212, 170, 0.3), rgba(0, 184, 148, 0.2)',
+                pranayama: 'rgba(255, 200, 87, 0.3), rgba(244, 162, 54, 0.2)',
+                exercise: 'rgba(255, 107, 53, 0.3), rgba(229, 90, 43, 0.2)'
+            };
+            return colors[category] || colors.yoga;
+        }
+
+        function showYogaDetail(id) {
+            const yoga = yogaExercises.find(y => y.id === id);
+            if (!yoga) return;
+
+            // Create and show a modal with yoga details
+            const modal = document.createElement('div');
+            modal.className = 'modal-overlay active';
+            modal.id = 'yogaDetailModal';
+            modal.innerHTML = `
+                <div class="modal glass-strong" style="max-width: 600px;">
+                    <div class="modal-header">
+                        <div>
+                            <h2 style="font-size: 1.5rem;">${yoga.name}</h2>
+                            <span style="color: var(--accent); font-size: 0.9rem;">${yoga.sanskrit}</span>
+                        </div>
+                        <button class="modal-close" onclick="document.getElementById('yogaDetailModal').remove()">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem;">
+                            <span class="yoga-badge ${yoga.difficulty}">${yoga.difficulty}</span>
+                            <span style="color: var(--fg-secondary); font-size: 0.9rem;">${yoga.duration}</span>
+                            <span style="color: var(--fg-secondary); font-size: 0.9rem;">${yoga.calories} kcal</span>
+                        </div>
+                        <p style="color: var(--fg-secondary); margin-bottom: 1.5rem;">${yoga.description}</p>
+                        
+                        <h4 style="margin-bottom: 0.75rem; color: var(--accent);">Benefits</h4>
+                        <ul style="color: var(--fg-secondary); margin-bottom: 1.5rem; padding-left: 1.25rem;">
+                            ${yoga.benefits.map(b => `<li style="margin-bottom: 0.25rem;">${b}</li>`).join('')}
+                        </ul>
+                        
+                        <h4 style="margin-bottom: 0.75rem; color: var(--accent);">Instructions</h4>
+                        <ol style="color: var(--fg-secondary); padding-left: 1.25rem;">
+                            ${yoga.instructions.map(i => `<li style="margin-bottom: 0.5rem;">${i}</li>`).join('')}
+                        </ol>
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(modal);
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) modal.remove();
+            });
+        }
+
+        // Initialize food list on load
+        setTimeout(() => {
+            updateFoodList();
+        }, 100);
+    </script>
 </body>
 </html>
