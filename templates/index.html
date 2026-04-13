@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FitLife India - Wellness & Nutrition</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+<body>
+    <!-- Animated Background -->
+    <div class="bg-animated">
+        <div class="floating-orb orb-1"></div>
+        <div class="floating-orb orb-2"></div>
+        <div class="floating-orb orb-3"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="#" class="logo" data-page="home">
+                <div class="logo-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0a0f0d"
+                        stroke-width="2.5">
+                        <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
+                        <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
+                        <line x1="6" y1="1" x2="6" y2="4"></line>
+                        <line x1="10" y1="1" x2="10" y2="4"></line>
+                        <line x1="14" y1="1" x2="14" y2="4"></line>
+                    </svg></div>
+                FitLife India
+            </a>
+            <div class="nav-links">
+                <button class="nav-link active" data-page="home">Home</button>
+                <button class="nav-link" data-page="nutrition">Nutrition</button>
+                <button class="nav-link" data-page="yoga">Yoga & Exercise</button>
+                <button class="nav-link" data-page="about">About</button>
+            </div>
+            <div class="nav-actions">
+                <button class="btn btn-ghost" id="loginBtn" data-auth="open">Sign In</button>
+                <button class="btn btn-primary" id="userBtn" style="display: none;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    <span id="userName"></span>
+                </button>
+                <button class="btn btn-primary" id="getStartedBtn" data-auth="open">Get Started</button>
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <button class="mobile-nav-link" data-page="home">Home</button>
+        <button class="mobile-nav-link" data-page="nutrition">Nutrition</button>
+        <button class="mobile-nav-link" data-page="yoga">Yoga & Exercise</button>
+        <button class="mobile-nav-link" data-page="about">About</button>
+        <button class="btn btn-primary" data-auth="open">Get Started</button>
+    </div>
+
+    <!-- Home Page -->
+    <div class="page active" id="homePage">
+        <section class="hero">
+            <div class="hero-content">
+                <div class="hero-text reveal">
+                    <h1>Transform Your Life with <span>Ancient Indian Wellness</span></h1>
+                    <p>Discover the perfect blend of traditional yoga practices and modern nutrition science. Track your
+                        daily intake, practice authentic exercises, and achieve your health goals.</p>
+                    <div class="hero-buttons">
+                        <button class="btn btn-primary" data-page="nutrition">Track Nutrition</button>
+                        <button class="btn btn-warm" data-page="yoga">Explore Yoga</button>
+                    </div>
+                </div>
+                <div class="hero-visual reveal">
+                    <div class="hero-card-container">
+                        <div class="glass-card hero-card">
+                            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                                <div
+                                    style="width: 48px; height: 48px; background: linear-gradient(135deg, var(--accent), var(--accent-gold)); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0a0f0d"
+                                        stroke-width="2">
+                                        <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h4 style="font-size: 1rem; font-weight: 600;">Daily Progress</h4>
+                                    <span style="font-size: 0.85rem; color: var(--fg-secondary);">You're doing
+                                        great!</span>
+                                </div>
+                            </div>
+                            <div class="stats-grid">
+                                <div class="stat-item">
+                                    <div class="stat-value" id="homeCalories">0</div>
+                                    <div class="stat-label">Calories</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-value" style="color: var(--accent-warm);" id="homeProtein">0g</div>
+                                    <div class="stat-label">Protein</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-value" style="color: var(--accent-gold);" id="homeCarbs">0g</div>
+                                    <div class="stat-label">Carbs</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-value" id="homeFats">0g</div>
+                                    <div class="stat-label">Fats</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="section-header reveal">
+                <h2>Why Choose FitLife India?</h2>
+                <p>Experience a holistic approach to wellness combining ancient wisdom with modern tracking technology
+                </p>
+            </div>
+            <div class="features-grid">
+                <div class="glass-card feature-card reveal">
+                    <div class="feature-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2">
+                            <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
+                            <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
+                        </svg></div>
+                    <h3>Smart Nutrition Tracking</h3>
+                    <p>Log your daily meals with detailed macro and micronutrient breakdown. Set goals and track your
+                        progress over time.</p>
+                </div>
+                <div class="glass-card feature-card reveal">
+                    <div class="feature-icon" style="color: var(--accent-warm);"><svg width="28" height="28"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <path d="M12 6v6l4 2"></path>
+                        </svg></div>
+                    <h3>Authentic Indian Yoga</h3>
+                    <p>Access a comprehensive library of traditional Indian yoga poses and exercises for all skill
+                        levels.</p>
+                </div>
+                <div class="glass-card feature-card reveal">
+                    <div class="feature-icon" style="color: var(--accent-gold);"><svg width="28" height="28"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 20V10"></path>
+                            <path d="M18 20V4"></path>
+                            <path d="M6 20v-4"></path>
+                        </svg></div>
+                    <h3>Progress Analytics</h3>
+                    <p>Visualize your health journey with detailed charts and historical data. Stay motivated with daily
+                        insights.</p>
+                </div>
+            </div>
+        </section>
+
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <a href="#" class="logo" data-page="home">
+                        <div class="logo-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                stroke="#0a0f0d" stroke-width="2.5">
+                                <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
+                                <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
+                            </svg></div>FitLife India
+                    </a>
+                    <p>Empowering millions to achieve their health goals through traditional Indian wellness practices
+                        and modern nutrition science.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Features</h4>
+                    <div class="footer-links"><button class="footer-link" data-page="nutrition">Nutrition
+                            Tracker</button><button class="footer-link" data-page="yoga">Yoga Library</button><button
+                            class="footer-link">Progress Reports</button></div>
+                </div>
+                <div class="footer-section">
+                    <h4>Company</h4>
+                    <div class="footer-links"><button class="footer-link" data-page="about">About Us</button><button
+                            class="footer-link">Careers</button><button class="footer-link">Contact</button></div>
+                </div>
+                <div class="footer-section">
+                    <h4>Legal</h4>
+                    <div class="footer-links"><button class="footer-link">Privacy Policy</button><button
+                            class="footer-link">Terms of Service</button><button class="footer-link">Cookie
+                            Policy</button></div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2025 FitLife India. All rights reserved.</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Nutrition Page -->
+    <div class="page" id="nutritionPage">
+        <div class="nutrition-container">
+            <div class="nutrition-header reveal">
+                <h1>Nutrition Tracker</h1>
+                <p>Track your daily food intake and monitor your nutritional goals</p>
+            </div>
+            <div class="nutrition-grid">
+                <div class="nutrition-sidebar">
+                    <div class="glass-card calorie-card reveal">
+                        <h3 style="margin-bottom: 0.5rem; font-size: 1rem; color: var(--fg-secondary);">Daily Calories
+                        </h3>
+                        <div class="calorie-ring">
+                            <svg width="180" height="180" viewBox="0 0 180 180">
+                                <defs>
+                                    <linearGradient id="calorieGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                        <stop offset="0%" style="stop-color: #00d4aa" />
+                                        <stop offset="100%" style="stop-color: #ffc857" />
+                                    </linearGradient>
+                                </defs>
+                                <circle class="calorie-ring-bg" cx="90" cy="90" r="80" />
+                                <circle class="calorie-ring-progress" id="calorieRing" cx="90" cy="90" r="80" />
+                            </svg>
+                            <div class="calorie-value">
+                                <div class="number" id="calorieNumber">0</div>
+                                <div class="unit">/ 2000 kcal</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="glass-card macro-card reveal">
+                        <h3 style="margin-bottom: 1rem; font-size: 1rem;">Macronutrients</h3>
+                        <div class="macro-item">
+                            <div class="macro-header"><span>Protein</span><span id="proteinValue">0g / 150g</span></div>
+                            <div class="macro-bar">
+                                <div class="macro-fill protein" id="proteinBar" style="width: 0%;"></div>
+                            </div>
+                        </div>
+                        <div class="macro-item">
+                            <div class="macro-header"><span>Carbohydrates</span><span id="carbsValue">0g / 250g</span>
+                            </div>
+                            <div class="macro-bar">
+                                <div class="macro-fill carbs" id="carbsBar" style="width: 0%;"></div>
+                            </div>
+                        </div>
+                        <div class="macro-item">
+                            <div class="macro-header"><span>Fats</span><span id="fatsValue">0g / 65g</span></div>
+                            <div class="macro-bar">
+                                <div class="macro-fill fats" id="fatsBar" style="width: 0%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="glass-card macro-card reveal">
+                        <h3 style="margin-bottom: 1rem; font-size: 1rem;">Micronutrients</h3>
+                        <div class="macro-item">
+                            <div class="macro-header"><span>Fiber</span><span id="fiberValue">0g / 30g</span></div>
+                            <div class="macro-bar">
+                                <div class="macro-fill"
+                                    style="width: 0%; background: linear-gradient(90deg, #4ade80, #22c55e);"
+                                    id="fiberBar"></div>
+                            </div>
+                        </div>
+                        <div class="macro-item">
+                            <div class="macro-header"><span>Sugar</span><span id="sugarValue">0g / 50g</span></div>
+                            <div class="macro-bar">
+                                <div class="macro-fill"
+                                    style="width: 0%; background: linear-gradient(90deg, #f472b6, #ec4899);"
+                                    id="sugarBar"></div>
+                            </div>
+                        </div>
+                        <div class="macro-item">
+                            <div class="macro-header"><span>Sodium</span><span id="sodiumValue">0mg / 2300mg</span>
+                            </div>
+                            <div class="macro-bar">
+                                <div class="macro-fill"
+                                    style="width: 0%; background: linear-gradient(90deg, #60a5fa, #3b82f6);"
+                                    id="sodiumBar"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="food-log-section">
+                    <!-- AI Meal Parser Integration -->
+                    <div class="glass-card ai-parser-card reveal">
+                        <h3>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                                <path d="M2 17l10 5 10-5"></path>
+                                <path d="M2 12l10 5 10-5"></path>
+                            </svg>
+                            Smart Meal Parser
+                        </h3>
+                        <div class="ai-input-group">
+                            <input type="text" id="aiMealInput" class="form-input"
+                                placeholder='Try: "2 roti, 1 bowl dal, 1 cup rice"'>
+                            <button class="btn btn-ai" id="aiParseBtn">Analyze</button>
+                        </div>
+                    </div>
+
+                    <div class="glass-card add-food-card reveal">
+                        <h3>Add Food Entry</h3>
+                        <form id="foodForm" class="food-form">
+                            <div class="form-group full-width"><label for="foodName">Food Name</label><input type="text"
+                                    id="foodName" class="form-input" placeholder="e.g., Dal Tadka, Roti, Sabzi"
+                                    required></div>
+                            <div class="form-group"><label for="foodCalories">Calories (kcal)</label><input
+                                    type="number" id="foodCalories" class="form-input" placeholder="0" min="0" required>
+                            </div>
+                            <div class="form-group"><label for="foodProtein">Protein (g)</label><input type="number"
+                                    id="foodProtein" class="form-input" placeholder="0" min="0" step="0.1"></div>
+                            <div class="form-group"><label for="foodCarbs">Carbs (g)</label><input type="number"
+                                    id="foodCarbs" class="form-input" placeholder="0" min="0" step="0.1"></div>
+                            <div class="form-group"><label for="foodFats">Fats (g)</label><input type="number"
+                                    id="foodFats" class="form-input" placeholder="0" min="0" step="0.1"></div>
+                            <div class="form-group"><label for="foodFiber">Fiber (g)</label><input type="number"
+                                    id="foodFiber" class="form-input" placeholder="0" min="0" step="0.1"></div>
+                            <div class="form-group"><label for="foodSugar">Sugar (g)</label><input type="number"
+                                    id="foodSugar" class="form-input" placeholder="0" min="0" step="0.1"></div>
+                            <div class="form-group"><label for="foodSodium">Sodium (mg)</label><input type="number"
+                                    id="foodSodium" class="form-input" placeholder="0" min="0"></div>
+                            <div class="form-group full-width"><button type="submit"
+                                    class="btn btn-primary auth-submit"><svg width="18" height="18" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2">
+                                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    </svg>Add Food</button></div>
+                        </form>
+                    </div>
+                    <div class="glass-card food-log-card reveal">
+                        <div class="food-log-header">
+                            <h3>Today's Food Log</h3><span style="font-size: 0.85rem; color: var(--fg-secondary);"
+                                id="todayDate"></span>
+                        </div>
+                        <div class="food-list" id="foodList"></div>
+                    </div>
+                    <div class="glass-card history-card reveal">
+                        <h3>Nutrition History</h3>
+                        <div class="history-list" id="historyList"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Yoga Page -->
+    <div class="page" id="yogaPage">
+        <div class="yoga-hero reveal">
+            <h1>Discover <span>Indian Yoga & Exercise</span></h1>
+            <p>Explore traditional Indian yoga poses, pranayama breathing techniques, and exercises designed for
+                holistic wellness</p>
+        </div>
+        <div class="yoga-tabs reveal" id="yogaTabs">
+            <button class="yoga-tab active" data-category="all">All</button>
+            <button class="yoga-tab" data-category="yoga">Yoga Asanas</button>
+            <button class="yoga-tab" data-category="pranayama">Pranayama</button>
+            <button class="yoga-tab" data-category="exercise">Indian Exercises</button>
+        </div>
+        <div class="yoga-grid" id="yogaGrid"></div>
+    </div>
+
+    <!-- About Page -->
+    <div class="page" id="aboutPage">
+        <section class="section" style="padding-top: 6rem;">
+            <div class="section-header reveal">
+                <h2>About FitLife India</h2>
+                <p>Bringing ancient Indian wellness wisdom to the modern world</p>
+            </div>
+            <div style="max-width: 800px; margin: 0 auto;">
+                <div class="glass-card reveal" style="padding: 2.5rem; margin-bottom: 2rem;">
+                    <h3 style="font-size: 1.5rem; margin-bottom: 1rem; color: var(--accent);">Our Mission</h3>
+                    <p style="color: var(--fg-secondary); line-height: 1.8;">FitLife India is dedicated to making
+                        traditional Indian wellness practices accessible to everyone. We combine centuries-old wisdom of
+                        yoga, ayurveda, and Indian dietary practices with modern nutrition science and technology to
+                        help you achieve optimal health.</p>
+                </div>
+                <div class="glass-card reveal" style="padding: 2.5rem; margin-bottom: 2rem;">
+                    <h3 style="font-size: 1.5rem; margin-bottom: 1rem; color: var(--accent-warm);">Why Indian Wellness?
+                    </h3>
+                    <p style="color: var(--fg-secondary); line-height: 1.8;">Indian wellness practices have been refined
+                        over thousands of years. From the therapeutic poses of Hatha Yoga to the breathing techniques of
+                        Pranayama, from the balanced nutrition of traditional Indian cuisine to the holistic approach of
+                        Ayurveda - these time-tested methods offer comprehensive solutions for modern health challenges.
+                    </p>
+                </div>
+                <div class="glass-card reveal" style="padding: 2.5rem;">
+                    <h3 style="font-size: 1.5rem; margin-bottom: 1rem; color: var(--accent-gold);">Our Features</h3>
+                    <ul style="color: var(--fg-secondary); line-height: 2; list-style: none; padding: 0;">
+                        <li style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;"><svg
+                                width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)"
+                                stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>Comprehensive nutrition tracking with macro and micronutrients</li>
+                        <li style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;"><svg
+                                width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)"
+                                stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>Extensive library of Indian yoga asanas with instructions</li>
+                        <li style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;"><svg
+                                width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)"
+                                stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>Pranayama breathing exercises for stress relief</li>
+                        <li style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;"><svg
+                                width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)"
+                                stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>Daily progress tracking and historical data</li>
+                        <li style="display: flex; align-items: center; gap: 0.75rem;"><svg width="20" height="20"
+                                viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>Traditional Indian exercises for strength and flexibility</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Auth Modal -->
+    <div class="modal-overlay" id="authModal" role="dialog" aria-modal="true">
+        <div class="modal glass-strong">
+            <div class="modal-header">
+                <h2>Welcome</h2>
+                <button class="modal-close" id="closeAuthModal" aria-label="Close modal"><svg width="24" height="24"
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg></button>
+            </div>
+            <div class="modal-body">
+                <div class="auth-tabs" id="authTabs">
+                    <button class="auth-tab active" data-auth="login">Sign In</button>
+                    <button class="auth-tab" data-auth="signup">Sign Up</button>
+                </div>
+                <form class="auth-form" id="authForm">
+                    <div class="form-group" id="nameGroup" style="display: none;"><label for="authName">Full
+                            Name</label><input type="text" id="authName" class="form-input"
+                            placeholder="Enter your name"></div>
+                    <div class="form-group"><label for="authEmail">Email Address</label><input type="email"
+                            id="authEmail" class="form-input" placeholder="you@example.com" required></div>
+                    <div class="form-group"><label for="authPassword">Password</label><input type="password"
+                            id="authPassword" class="form-input" placeholder="Enter your password" required></div>
+                    <button type="submit" class="btn btn-primary auth-submit">Continue</button>
+                </form>
+                <div class="divider">or continue with</div>
+                <button class="btn btn-ghost" style="width: 100%; border: 1px solid rgba(255,255,255,0.1);"
+                    id="guestLoginBtn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    Continue as Guest
+                </button>
+            </div>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+
+</html>
